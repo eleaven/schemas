@@ -1,0 +1,53 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "responses"
+  ],
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "externalDocs": {
+      "$ref": "openapi-external-documentation.json"
+    },
+    "operationId": {
+      "type": "string"
+    },
+    "parameters": {
+      "$ref": "openapi-parameters.json"
+    },
+    "requestBody": {
+      "$ref": "openapi-request-body-or-reference.json"
+    },
+    "responses": {
+      "$ref": "openapi-responses.json"
+    },
+    "callbacks": {
+      "$ref": "openapi-callbacks.json"
+    },
+    "deprecated": {
+      "type": "boolean",
+      "default": false
+    },
+    "security": {
+      "$ref": "openapi-security.json"
+    },
+    "servers": {
+      "$ref": "openapi-servers.json"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.2#media-type-object",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "schema": {
+      "$dynamicRef": "openapi-schema.json#meta"
+    },
+    "itemSchema": {
+      "$dynamicRef": "openapi-schema.json#meta"
+    },
+    "encoding": {
+      "$ref": "openapi-encodings.json"
+    },
+    "prefixEncoding": {
+      "type": "array",
+      "items": {
+        "$ref": "openapi-encoding.json"
+      }
+    },
+    "itemEncoding": {
+      "$ref": "openapi-encoding.json"
+    }
+  },
+  "dependentSchemas": {
+    "encoding": {
+      "properties": {
+        "prefixEncoding": false,
+        "itemEncoding": false
+      }
+    }
+  },
+  "allOf": [
+    {
+      "$ref": "openapi-example-xor-examples.json"
+    },
+    {
+      "$ref": "openapi-specification-extensions.json"
+    }
+  ],
+  "unevaluatedProperties": false
+}

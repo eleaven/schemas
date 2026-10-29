@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "if": {
+    "type": "object",
+    "required": [
+      "$ref"
+    ]
+  },
+  "then": {
+    "$ref": "openapi-reference.json"
+  },
+  "else": {
+    "$ref": "openapi-parameter.json"
+  }
+}

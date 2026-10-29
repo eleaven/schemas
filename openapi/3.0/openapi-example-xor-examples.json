@@ -1,0 +1,10 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Example and examples are mutually exclusive",
+  "not": {
+    "required": [
+      "example",
+      "examples"
+    ]
+  }
+}

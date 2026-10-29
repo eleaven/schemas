@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#path-item-object",
+  "type": "object",
+  "properties": {
+    "$ref": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "servers": {
+      "$ref": "openapi-servers.json"
+    },
+    "parameters": {
+      "$ref": "openapi-parameters.json"
+    },
+    "get": {
+      "$ref": "openapi-operation.json"
+    },
+    "put": {
+      "$ref": "openapi-operation.json"
+    },
+    "post": {
+      "$ref": "openapi-operation.json"
+    },
+    "delete": {
+      "$ref": "openapi-operation.json"
+    },
+    "options": {
+      "$ref": "openapi-operation.json"
+    },
+    "head": {
+      "$ref": "openapi-operation.json"
+    },
+    "patch": {
+      "$ref": "openapi-operation.json"
+    },
+    "trace": {
+      "$ref": "openapi-operation.json"
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

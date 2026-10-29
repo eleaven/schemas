@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "default": {
+      "$ref": "openapi-response-or-reference.json"
+    }
+  },
+  "patternProperties": {
+    "^[1-5](?:\\d{2}|XX)$": {
+      "$ref": "openapi-response-or-reference.json"
+    },
+    "^x-": {}
+  },
+  "minProperties": 1,
+  "additionalProperties": false
+}

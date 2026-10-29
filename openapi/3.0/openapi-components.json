@@ -1,0 +1,82 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "schemas": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-schema-or-reference.json"
+        }
+      }
+    },
+    "responses": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-response-or-reference.json"
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-parameter-or-reference.json"
+        }
+      }
+    },
+    "examples": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-example-or-reference.json"
+        }
+      }
+    },
+    "requestBodies": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-request-body-or-reference.json"
+        }
+      }
+    },
+    "headers": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-header-or-reference.json"
+        }
+      }
+    },
+    "securitySchemes": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-security-scheme-or-reference.json"
+        }
+      }
+    },
+    "links": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-link-or-reference.json"
+        }
+      }
+    },
+    "callbacks": {
+      "type": "object",
+      "patternProperties": {
+        "^[a-zA-Z0-9\\.\\-_]+$": {
+          "$ref": "openapi-callback-or-reference.json"
+        }
+      }
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

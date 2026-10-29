@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#response-object",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "headers": {
+      "$ref": "openapi-headers.json"
+    },
+    "content": {
+      "$ref": "openapi-content.json"
+    },
+    "links": {
+      "$ref": "openapi-links.json"
+    }
+  },
+  "required": [
+    "description"
+  ],
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

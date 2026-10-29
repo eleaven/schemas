@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#operation-object",
+  "type": "object",
+  "properties": {
+    "tags": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "externalDocs": {
+      "$ref": "openapi-external-documentation.json"
+    },
+    "operationId": {
+      "type": "string"
+    },
+    "parameters": {
+      "$ref": "openapi-parameters.json"
+    },
+    "requestBody": {
+      "$ref": "openapi-request-body-or-reference.json"
+    },
+    "responses": {
+      "$ref": "openapi-responses.json"
+    },
+    "callbacks": {
+      "$ref": "openapi-callbacks.json"
+    },
+    "deprecated": {
+      "default": false,
+      "type": "boolean"
+    },
+    "security": {
+      "$ref": "openapi-security.json"
+    },
+    "servers": {
+      "$ref": "openapi-servers.json"
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

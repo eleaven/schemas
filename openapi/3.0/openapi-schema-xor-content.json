@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Schema and content are mutually exclusive, at least one is required",
+  "not": {
+    "required": [
+      "schema",
+      "content"
+    ]
+  },
+  "oneOf": [
+    {
+      "required": [
+        "schema"
+      ]
+    },
+    {
+      "required": [
+        "content"
+      ],
+      "description": "Some properties are not allowed if content is present",
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "style"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "explode"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "allowReserved"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "example"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "examples"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

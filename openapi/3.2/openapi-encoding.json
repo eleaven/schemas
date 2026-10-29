@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.2#encoding-object",
+  "type": "object",
+  "properties": {
+    "contentType": {
+      "$comment": "one or more comma-separated media-ranges",
+      "type": "string"
+    },
+    "headers": {
+      "$ref": "openapi-headers.json",
+      "propertyNames": {
+        "$ref": "openapi-token.json"
+      }
+    },
+    "style": {
+      "enum": [
+        "form",
+        "spaceDelimited",
+        "pipeDelimited",
+        "deepObject"
+      ]
+    },
+    "explode": {
+      "type": "boolean"
+    },
+    "allowReserved": {
+      "type": "boolean"
+    },
+    "encoding": {
+      "$ref": "openapi-encodings.json"
+    },
+    "prefixEncoding": {
+      "type": "array",
+      "items": {
+        "$ref": "#"
+      }
+    },
+    "itemEncoding": {
+      "$ref": "#"
+    }
+  },
+  "dependentSchemas": {
+    "encoding": {
+      "properties": {
+        "prefixEncoding": false,
+        "itemEncoding": false
+      }
+    },
+    "style": {
+      "properties": {
+        "allowReserved": {
+          "default": false
+        }
+      },
+      "$ref": "openapi-explode-for-form.json"
+    },
+    "explode": {
+      "properties": {
+        "style": {
+          "default": "form"
+        },
+        "allowReserved": {
+          "default": false
+        }
+      }
+    },
+    "allowReserved": {
+      "properties": {
+        "style": {
+          "default": "form"
+        }
+      },
+      "$ref": "openapi-explode-for-form.json"
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

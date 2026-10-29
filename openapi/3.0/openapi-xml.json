@@ -1,0 +1,28 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "namespace": {
+      "type": "string",
+      "format": "uri"
+    },
+    "prefix": {
+      "type": "string"
+    },
+    "attribute": {
+      "type": "boolean",
+      "default": false
+    },
+    "wrapped": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#encoding-object",
+  "type": "object",
+  "properties": {
+    "contentType": {
+      "$comment": "one or more comma-separated media-ranges",
+      "type": "string"
+    },
+    "headers": {
+      "$ref": "openapi-headers.json"
+    },
+    "style": {
+      "enum": [
+        "form",
+        "spaceDelimited",
+        "pipeDelimited",
+        "deepObject"
+      ]
+    },
+    "explode": {
+      "type": "boolean"
+    },
+    "allowReserved": {
+      "type": "boolean"
+    }
+  },
+  "dependentSchemas": {
+    "style": {
+      "properties": {
+        "allowReserved": {
+          "default": false
+        }
+      },
+      "$ref": "openapi-explode-for-form.json"
+    },
+    "explode": {
+      "properties": {
+        "style": {
+          "default": "form"
+        },
+        "allowReserved": {
+          "default": false
+        }
+      }
+    },
+    "allowReserved": {
+      "properties": {
+        "style": {
+          "default": "form"
+        }
+      },
+      "$ref": "openapi-explode-for-form.json"
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

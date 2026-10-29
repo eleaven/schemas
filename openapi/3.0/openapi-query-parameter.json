@@ -1,0 +1,20 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Parameter in query",
+  "properties": {
+    "in": {
+      "enum": [
+        "query"
+      ]
+    },
+    "style": {
+      "enum": [
+        "form",
+        "spaceDelimited",
+        "pipeDelimited",
+        "deepObject"
+      ],
+      "default": "form"
+    }
+  }
+}

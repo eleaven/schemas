@@ -1,0 +1,22 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "implicit": {
+      "$ref": "openapi-implicit-oauth-flow.json"
+    },
+    "password": {
+      "$ref": "openapi-password-oauth-flow.json"
+    },
+    "clientCredentials": {
+      "$ref": "openapi-client-credentials-flow.json"
+    },
+    "authorizationCode": {
+      "$ref": "openapi-authorization-code-oauth-flow.json"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

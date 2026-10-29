@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#example-object",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "value": true,
+    "externalValue": {
+      "type": "string",
+      "format": "uri-reference"
+    }
+  },
+  "not": {
+    "required": [
+      "value",
+      "externalValue"
+    ]
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

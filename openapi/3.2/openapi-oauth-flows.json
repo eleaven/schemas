@@ -1,0 +1,145 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "properties": {
+    "implicit": {
+      "$ref": "#/$defs/implicit"
+    },
+    "password": {
+      "$ref": "#/$defs/password"
+    },
+    "clientCredentials": {
+      "$ref": "#/$defs/client-credentials"
+    },
+    "authorizationCode": {
+      "$ref": "#/$defs/authorization-code"
+    },
+    "deviceAuthorization": {
+      "$ref": "#/$defs/device-authorization"
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false,
+  "$defs": {
+    "implicit": {
+      "type": "object",
+      "properties": {
+        "authorizationUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "$ref": "openapi-map-of-strings.json"
+        }
+      },
+      "required": [
+        "authorizationUrl",
+        "scopes"
+      ],
+      "$ref": "openapi-specification-extensions.json",
+      "unevaluatedProperties": false
+    },
+    "password": {
+      "type": "object",
+      "properties": {
+        "tokenUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "$ref": "openapi-map-of-strings.json"
+        }
+      },
+      "required": [
+        "tokenUrl",
+        "scopes"
+      ],
+      "$ref": "openapi-specification-extensions.json",
+      "unevaluatedProperties": false
+    },
+    "client-credentials": {
+      "type": "object",
+      "properties": {
+        "tokenUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "$ref": "openapi-map-of-strings.json"
+        }
+      },
+      "required": [
+        "tokenUrl",
+        "scopes"
+      ],
+      "$ref": "openapi-specification-extensions.json",
+      "unevaluatedProperties": false
+    },
+    "authorization-code": {
+      "type": "object",
+      "properties": {
+        "authorizationUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tokenUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "$ref": "openapi-map-of-strings.json"
+        }
+      },
+      "required": [
+        "authorizationUrl",
+        "tokenUrl",
+        "scopes"
+      ],
+      "$ref": "openapi-specification-extensions.json",
+      "unevaluatedProperties": false
+    },
+    "device-authorization": {
+      "type": "object",
+      "properties": {
+        "deviceAuthorizationUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tokenUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "$ref": "openapi-map-of-strings.json"
+        }
+      },
+      "required": [
+        "deviceAuthorizationUrl",
+        "tokenUrl",
+        "scopes"
+      ],
+      "$ref": "openapi-specification-extensions.json",
+      "unevaluatedProperties": false
+    }
+  }
+}

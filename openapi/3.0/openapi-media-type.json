@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "schema": {
+      "$ref": "openapi-schema-or-reference.json"
+    },
+    "example": {},
+    "examples": {
+      "$ref": "openapi-examples.json"
+    },
+    "encoding": {
+      "$ref": "openapi-encodings.json"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false,
+  "allOf": [
+    {
+      "$ref": "openapi-example-xor-examples.json"
+    }
+  ]
+}

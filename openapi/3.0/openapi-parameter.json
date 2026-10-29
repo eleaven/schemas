@@ -1,0 +1,83 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "in": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "required": {
+      "type": "boolean",
+      "default": false
+    },
+    "deprecated": {
+      "type": "boolean",
+      "default": false
+    },
+    "allowEmptyValue": {
+      "type": "boolean",
+      "default": false
+    },
+    "style": {
+      "type": "string"
+    },
+    "explode": {
+      "type": "boolean"
+    },
+    "allowReserved": {
+      "type": "boolean",
+      "default": false
+    },
+    "schema": {
+      "$ref": "openapi-schema-or-reference.json"
+    },
+    "content": {
+      "allOf": [
+        {
+          "$ref": "openapi-content.json"
+        }
+      ],
+      "minProperties": 1,
+      "maxProperties": 1
+    },
+    "example": {},
+    "examples": {
+      "$ref": "openapi-examples.json"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false,
+  "required": [
+    "name",
+    "in"
+  ],
+  "allOf": [
+    {
+      "$ref": "openapi-example-xor-examples.json"
+    },
+    {
+      "$ref": "openapi-schema-xor-content.json"
+    }
+  ],
+  "oneOf": [
+    {
+      "$ref": "openapi-path-parameter.json"
+    },
+    {
+      "$ref": "openapi-query-parameter.json"
+    },
+    {
+      "$ref": "openapi-header-parameter.json"
+    },
+    {
+      "$ref": "openapi-cookie-parameter.json"
+    }
+  ]
+}

@@ -1,0 +1,58 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.2#example-object",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "dataValue": true,
+    "serializedValue": {
+      "type": "string"
+    },
+    "value": true,
+    "externalValue": {
+      "type": "string",
+      "format": "uri-reference"
+    }
+  },
+  "allOf": [
+    {
+      "not": {
+        "required": [
+          "value",
+          "externalValue"
+        ]
+      }
+    },
+    {
+      "not": {
+        "required": [
+          "value",
+          "dataValue"
+        ]
+      }
+    },
+    {
+      "not": {
+        "required": [
+          "value",
+          "serializedValue"
+        ]
+      }
+    },
+    {
+      "not": {
+        "required": [
+          "serializedValue",
+          "externalValue"
+        ]
+      }
+    }
+  ],
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

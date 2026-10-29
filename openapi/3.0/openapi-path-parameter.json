@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "Parameter in path",
+  "required": [
+    "required"
+  ],
+  "properties": {
+    "in": {
+      "enum": [
+        "path"
+      ]
+    },
+    "style": {
+      "enum": [
+        "matrix",
+        "label",
+        "simple"
+      ],
+      "default": "simple"
+    },
+    "required": {
+      "enum": [
+        true
+      ]
+    }
+  }
+}

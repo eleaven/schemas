@@ -1,0 +1,35 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "type",
+    "name",
+    "in"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "apiKey"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "in": {
+      "type": "string",
+      "enum": [
+        "header",
+        "query",
+        "cookie"
+      ]
+    },
+    "description": {
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

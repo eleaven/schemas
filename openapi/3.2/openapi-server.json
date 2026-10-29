@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.2#server-object",
+  "type": "object",
+  "properties": {
+    "url": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "name": {
+      "type": "string"
+    },
+    "variables": {
+      "$ref": "openapi-server-variables.json"
+    }
+  },
+  "required": [
+    "url"
+  ],
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

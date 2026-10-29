@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "title",
+    "version"
+  ],
+  "properties": {
+    "title": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "termsOfService": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "contact": {
+      "$ref": "openapi-contact.json"
+    },
+    "license": {
+      "$ref": "openapi-license.json"
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

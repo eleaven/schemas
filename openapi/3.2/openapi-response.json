@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.2#response-object",
+  "type": "object",
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "headers": {
+      "$ref": "openapi-headers.json",
+      "propertyNames": {
+        "$ref": "openapi-token.json"
+      }
+    },
+    "content": {
+      "$ref": "openapi-content.json"
+    },
+    "links": {
+      "$ref": "openapi-links.json"
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

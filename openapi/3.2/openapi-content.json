@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "The `content` object is a property of:\nParameter Object: https://spec.openapis.org/oas/v3.2#parameter-object\nRequest Body Object: https://spec.openapis.org/oas/v3.2#request-body-object\nResponse Object: https://spec.openapis.org/oas/v3.2#response-object\nHeader Object: https://spec.openapis.org/oas/v3.2#header-object\n",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "openapi-media-type-or-reference.json"
+  },
+  "propertyNames": {
+    "format": "media-range"
+  }
+}

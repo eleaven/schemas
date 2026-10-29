@@ -1,0 +1,41 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "description": "The description of OpenAPI v3.0.x Documents",
+  "type": "object",
+  "required": [
+    "openapi",
+    "info",
+    "paths"
+  ],
+  "properties": {
+    "openapi": {
+      "type": "string",
+      "pattern": "^3\\.0\\.\\d(-.+)?$"
+    },
+    "info": {
+      "$ref": "openapi-info.json"
+    },
+    "externalDocs": {
+      "$ref": "openapi-external-documentation.json"
+    },
+    "servers": {
+      "$ref": "openapi-servers.json"
+    },
+    "security": {
+      "$ref": "openapi-security.json"
+    },
+    "tags": {
+      "$ref": "openapi-tags.json"
+    },
+    "paths": {
+      "$ref": "openapi-paths.json"
+    },
+    "components": {
+      "$ref": "openapi-components.json"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

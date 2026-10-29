@@ -1,0 +1,9 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#callback-object",
+  "type": "object",
+  "$ref": "openapi-specification-extensions.json",
+  "additionalProperties": {
+    "$ref": "openapi-path-item.json"
+  }
+}

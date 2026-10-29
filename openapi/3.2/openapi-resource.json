@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Not part of the OpenAPI Specification: a Components Object that also accepts named Path Items in `paths`, to describe a resource in a single file.",
+  "type": "object",
+  "properties": {
+    "paths": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-path-item.json"
+      },
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9._-]+$"
+      }
+    },
+    "schemas": {
+      "type": "object",
+      "additionalProperties": {
+        "$dynamicRef": "openapi-schema.json#meta"
+      }
+    },
+    "responses": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-response-or-reference.json"
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-parameter-or-reference.json"
+      }
+    },
+    "examples": {
+      "$ref": "openapi-examples.json"
+    },
+    "requestBodies": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-request-body-or-reference.json"
+      }
+    },
+    "headers": {
+      "$ref": "openapi-headers.json"
+    },
+    "securitySchemes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-security-scheme-or-reference.json"
+      }
+    },
+    "links": {
+      "$ref": "openapi-links.json"
+    },
+    "callbacks": {
+      "$ref": "openapi-callbacks.json"
+    },
+    "pathItems": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-path-item.json"
+      }
+    },
+    "mediaTypes": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-media-type-or-reference.json"
+      }
+    }
+  },
+  "patternProperties": {
+    "^(?:schemas|responses|parameters|examples|requestBodies|headers|securitySchemes|links|callbacks|pathItems|mediaTypes)$": {
+      "$comment": "Enumerating all of the property names in the regex above is necessary for unevaluatedProperties to work as expected",
+      "propertyNames": {
+        "pattern": "^[a-zA-Z0-9._-]+$"
+      }
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "array",
+  "items": {
+    "$ref": "openapi-parameter-or-reference.json"
+  },
+  "not": {
+    "allOf": [
+      {
+        "contains": {
+          "type": "object",
+          "properties": {
+            "in": {
+              "const": "query"
+            }
+          },
+          "required": [
+            "in"
+          ]
+        }
+      },
+      {
+        "contains": {
+          "type": "object",
+          "properties": {
+            "in": {
+              "const": "querystring"
+            }
+          },
+          "required": [
+            "in"
+          ]
+        }
+      }
+    ]
+  },
+  "contains": {
+    "type": "object",
+    "properties": {
+      "in": {
+        "const": "querystring"
+      }
+    },
+    "required": [
+      "in"
+    ]
+  },
+  "minContains": 0,
+  "maxContains": 1
+}

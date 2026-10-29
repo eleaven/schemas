@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "for encoding objects, and query and cookie parameters, style=form is the default",
+  "if": {
+    "properties": {
+      "style": {
+        "const": "form"
+      }
+    }
+  },
+  "then": {
+    "properties": {
+      "explode": {
+        "default": true
+      }
+    }
+  },
+  "else": {
+    "properties": {
+      "explode": {
+        "default": false
+      }
+    }
+  }
+}

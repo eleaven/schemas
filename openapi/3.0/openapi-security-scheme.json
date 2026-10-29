@@ -1,0 +1,17 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "oneOf": [
+    {
+      "$ref": "openapi-api-key-security-scheme.json"
+    },
+    {
+      "$ref": "openapi-http-security-scheme.json"
+    },
+    {
+      "$ref": "openapi-oauth2-security-scheme.json"
+    },
+    {
+      "$ref": "openapi-open-id-connect-security-scheme.json"
+    }
+  ]
+}

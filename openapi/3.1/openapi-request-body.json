@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#request-body-object",
+  "type": "object",
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "content": {
+      "$ref": "openapi-content.json"
+    },
+    "required": {
+      "default": false,
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "content"
+  ],
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

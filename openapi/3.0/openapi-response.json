@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "required": [
+    "description"
+  ],
+  "properties": {
+    "description": {
+      "type": "string"
+    },
+    "headers": {
+      "$ref": "openapi-headers.json"
+    },
+    "content": {
+      "$ref": "openapi-content.json"
+    },
+    "links": {
+      "$ref": "openapi-links.json"
+    }
+  },
+  "patternProperties": {
+    "^x-": {}
+  },
+  "additionalProperties": false
+}

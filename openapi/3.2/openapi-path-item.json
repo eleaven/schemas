@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.2#path-item-object",
+  "type": "object",
+  "properties": {
+    "$ref": {
+      "type": "string",
+      "format": "uri-reference"
+    },
+    "summary": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "servers": {
+      "$ref": "openapi-servers.json"
+    },
+    "parameters": {
+      "$ref": "openapi-parameters.json"
+    },
+    "additionalOperations": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "openapi-operation.json"
+      },
+      "propertyNames": {
+        "$comment": "RFC9110 restricts methods to \"1*tchar\" in ABNF",
+        "$ref": "openapi-token.json",
+        "not": {
+          "enum": [
+            "GET",
+            "PUT",
+            "POST",
+            "DELETE",
+            "OPTIONS",
+            "HEAD",
+            "PATCH",
+            "TRACE",
+            "QUERY"
+          ]
+        }
+      }
+    },
+    "get": {
+      "$ref": "openapi-operation.json"
+    },
+    "put": {
+      "$ref": "openapi-operation.json"
+    },
+    "post": {
+      "$ref": "openapi-operation.json"
+    },
+    "delete": {
+      "$ref": "openapi-operation.json"
+    },
+    "options": {
+      "$ref": "openapi-operation.json"
+    },
+    "head": {
+      "$ref": "openapi-operation.json"
+    },
+    "patch": {
+      "$ref": "openapi-operation.json"
+    },
+    "trace": {
+      "$ref": "openapi-operation.json"
+    },
+    "query": {
+      "$ref": "openapi-operation.json"
+    }
+  },
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

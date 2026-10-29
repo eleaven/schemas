@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Not part of the OpenAPI Specification: a Components Object that also accepts named Path Items in `paths`, to describe a resource in a single file. Schema Objects are validated with the OpenAPI dialect.",
+  "$ref": "openapi-resource.json",
+  "$defs": {
+    "dialect": {
+      "const": "https://spec.openapis.org/oas/3.1/dialect/2024-11-10"
+    },
+    "schema": {
+      "$dynamicAnchor": "meta",
+      "$ref": "https://spec.openapis.org/oas/3.1/dialect/2024-11-10",
+      "properties": {
+        "$schema": {
+          "$ref": "#/$defs/dialect"
+        }
+      }
+    }
+  }
+}

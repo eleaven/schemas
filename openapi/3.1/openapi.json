@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "The description of OpenAPI v3.1.x Documents without Schema Object validation",
+  "type": "object",
+  "properties": {
+    "openapi": {
+      "type": "string",
+      "pattern": "^3\\.1\\.\\d+(-.+)?$"
+    },
+    "info": {
+      "$ref": "openapi-info.json"
+    },
+    "jsonSchemaDialect": {
+      "type": "string",
+      "format": "uri-reference",
+      "default": "https://spec.openapis.org/oas/3.1/dialect/2024-11-10"
+    },
+    "servers": {
+      "$ref": "openapi-servers.json",
+      "default": [
+        {
+          "url": "/"
+        }
+      ]
+    },
+    "paths": {
+      "$ref": "openapi-paths.json"
+    },
+    "webhooks": {
+      "$ref": "openapi-webhooks.json"
+    },
+    "components": {
+      "$ref": "openapi-components.json"
+    },
+    "security": {
+      "$ref": "openapi-security.json"
+    },
+    "tags": {
+      "$ref": "openapi-tags.json"
+    },
+    "externalDocs": {
+      "$ref": "openapi-external-documentation.json"
+    }
+  },
+  "required": [
+    "openapi",
+    "info"
+  ],
+  "anyOf": [
+    {
+      "required": [
+        "paths"
+      ]
+    },
+    {
+      "required": [
+        "components"
+      ]
+    },
+    {
+      "required": [
+        "webhooks"
+      ]
+    }
+  ],
+  "$ref": "openapi-specification-extensions.json",
+  "unevaluatedProperties": false
+}

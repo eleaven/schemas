@@ -1,0 +1,11 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.1#fixed-fields-10",
+  "type": "object",
+  "additionalProperties": {
+    "$ref": "openapi-media-type.json"
+  },
+  "propertyNames": {
+    "format": "media-range"
+  }
+}

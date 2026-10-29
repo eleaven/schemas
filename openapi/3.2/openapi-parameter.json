@@ -1,0 +1,278 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "https://spec.openapis.org/oas/v3.2#parameter-object",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "in": {
+      "enum": [
+        "query",
+        "querystring",
+        "header",
+        "path",
+        "cookie"
+      ]
+    },
+    "description": {
+      "type": "string"
+    },
+    "required": {
+      "default": false,
+      "type": "boolean"
+    },
+    "deprecated": {
+      "default": false,
+      "type": "boolean"
+    },
+    "schema": {
+      "$dynamicRef": "openapi-schema.json#meta"
+    },
+    "content": {
+      "$ref": "openapi-content.json",
+      "minProperties": 1,
+      "maxProperties": 1
+    }
+  },
+  "required": [
+    "name",
+    "in"
+  ],
+  "oneOf": [
+    {
+      "required": [
+        "schema"
+      ]
+    },
+    {
+      "required": [
+        "content"
+      ]
+    }
+  ],
+  "allOf": [
+    {
+      "$ref": "openapi-example-xor-examples.json"
+    },
+    {
+      "$ref": "openapi-specification-extensions.json"
+    },
+    {
+      "if": {
+        "properties": {
+          "in": {
+            "const": "query"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "allowEmptyValue": {
+            "default": false,
+            "type": "boolean"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "in": {
+            "const": "querystring"
+          }
+        }
+      },
+      "then": {
+        "required": [
+          "content"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "in": {
+            "const": "path"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "name": {
+            "$comment": "see OAS 3.2.0 §4.8.2",
+            "pattern": "^[^{}]+$"
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "in": {
+            "const": "header"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "name": {
+            "$comment": "see RFC9110 §5.1",
+            "$ref": "openapi-token.json"
+          }
+        }
+      }
+    }
+  ],
+  "dependentSchemas": {
+    "schema": {
+      "properties": {
+        "style": {
+          "type": "string"
+        },
+        "explode": {
+          "type": "boolean"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/dependentSchemas/schema/$defs/styles-for-path"
+        },
+        {
+          "$ref": "#/dependentSchemas/schema/$defs/styles-for-header"
+        },
+        {
+          "$ref": "#/dependentSchemas/schema/$defs/styles-for-query"
+        },
+        {
+          "$ref": "#/dependentSchemas/schema/$defs/styles-for-cookie"
+        }
+      ],
+      "$defs": {
+        "styles-for-path": {
+          "if": {
+            "properties": {
+              "in": {
+                "const": "path"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "name": {
+                "pattern": "^[^{}]+$"
+              },
+              "style": {
+                "default": "simple",
+                "enum": [
+                  "matrix",
+                  "label",
+                  "simple"
+                ]
+              },
+              "required": {
+                "const": true
+              },
+              "explode": {
+                "default": false
+              },
+              "allowReserved": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            "required": [
+              "required"
+            ]
+          }
+        },
+        "styles-for-header": {
+          "if": {
+            "properties": {
+              "in": {
+                "const": "header"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "style": {
+                "default": "simple",
+                "const": "simple"
+              },
+              "explode": {
+                "default": false
+              }
+            }
+          }
+        },
+        "styles-for-query": {
+          "if": {
+            "properties": {
+              "in": {
+                "const": "query"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "style": {
+                "default": "form",
+                "enum": [
+                  "form",
+                  "spaceDelimited",
+                  "pipeDelimited",
+                  "deepObject"
+                ]
+              },
+              "allowReserved": {
+                "type": "boolean",
+                "default": false
+              }
+            },
+            "$ref": "openapi-explode-for-form.json"
+          }
+        },
+        "styles-for-cookie": {
+          "if": {
+            "properties": {
+              "in": {
+                "const": "cookie"
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "style": {
+                "default": "form",
+                "enum": [
+                  "form",
+                  "cookie"
+                ]
+              },
+              "explode": {
+                "default": true
+              }
+            },
+            "if": {
+              "properties": {
+                "style": {
+                  "const": "form"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "allowReserved": {
+                  "type": "boolean",
+                  "default": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "unevaluatedProperties": false
+}
