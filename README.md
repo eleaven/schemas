@@ -1,8 +1,7 @@
 # JSON Schemas
 
-[![OpenAPI workflow](https://img.shields.io/github/actions/workflow/status/eleaven/schemas/openapi.yaml?branch=main&label=openapi)](https://github.com/eleaven/schemas/actions/workflows/openapi.yaml)
-[![License](https://img.shields.io/github/license/eleaven/schemas)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/eleaven/schemas/main)](https://github.com/eleaven/schemas/commits/main)
+[![License](https://img.shields.io/github/license/eleaven/schemas)](LICENSE)
 
 Improved JSON Schemas, automatically kept up to date with their upstream sources by GitHub Actions.
 
@@ -19,9 +18,9 @@ upstream specification.
 
 ## Schema catalog
 
-| Schema | Upstream | Documentation |
-| --- | --- | --- |
-| OpenAPI | [OpenAPI Initiative](https://spec.openapis.org/) | [`openapi/README.md`](openapi/README.md) |
+| Schema | Upstream | Documentation | Status |
+| --- | --- | --- | --- |
+| OpenAPI | [OpenAPI Initiative](https://spec.openapis.org/) | [`openapi/README.md`](openapi/README.md) | [![OpenAPI](https://github.com/eleaven/schemas/actions/workflows/openapi.yaml/badge.svg)](https://github.com/eleaven/schemas/actions/workflows/openapi.yaml) |
 
 ## Using the schemas
 
