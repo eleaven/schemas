@@ -69,7 +69,7 @@ check-jsonschema --schemafile https://cdn.jsdelivr.net/gh/eleaven/schemas@main/o
 ## Automatic updates
 
 Each schema has its own GitHub Actions workflow in [`.github/workflows`](.github/workflows) (for example
-[`openapi.yaml`](.github/workflows/openapi.yaml)). On each run, the workflow:
+[`openapi.yaml`](.github/workflows/openapi.yaml)), which runs every week. On each run, the workflow:
 
 1. downloads the latest upstream schema;
 2. applies this repository's improvements on top of it;
