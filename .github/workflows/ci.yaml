@@ -1,0 +1,92 @@
+name: CI
+
+on:
+  schedule:
+    - cron: "0 4 * * 1"
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "*/update.py"
+      - .github/workflows/ci.yaml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    outputs:
+      folders: ${{ steps.find.outputs.folders }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Find update scripts
+        id: find
+        run: echo "folders=$(ls -d */update.py | xargs -n1 dirname | jq -Rcs 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
+
+  update:
+    needs: discover
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        folder: ${{ fromJSON(needs.discover.outputs.folders) }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.13"
+
+      - name: Update ${{ matrix.folder }}
+        run: python ${{ matrix.folder }}/update.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: schemas-${{ matrix.folder }}
+          path: ${{ matrix.folder }}
+
+  commit:
+    needs: update
+    # Commit the folders that were updated, even if others failed.
+    if: ${{ !cancelled() && needs.update.result != 'skipped' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/download-artifact@v8
+        with:
+          pattern: schemas-*
+          path: ${{ runner.temp }}/schemas
+
+      - name: Replace updated folders
+        run: |
+          shopt -s nullglob
+          for artifact in "$RUNNER_TEMP"/schemas/schemas-*/; do
+            folder=$(basename "$artifact")
+            folder="${folder#schemas-}"
+            # Only replace a top-level folder that has an update script.
+            [ -n "$folder" ] && [ -f "$folder/update.py" ] || continue
+            rm -rf -- "./$folder"
+            cp -r "$artifact" "./$folder"
+          done
+
+      - name: Commit changes
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Schemas are up to date"
+            exit 0
+          fi
+          folders=$(git diff --cached --name-only | cut -d/ -f1 | sort -u | paste -sd, - | sed 's/,/, /g')
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Update schemas: $folders"
+          git push
