@@ -85,33 +85,33 @@
       ]
     },
     "not": {
-      "$ref": "openapi-schema-or-reference.json"
+      "$ref": "#/definitions/schema-or-reference"
     },
     "allOf": {
       "type": "array",
       "items": {
-        "$ref": "openapi-schema-or-reference.json"
+        "$ref": "#/definitions/schema-or-reference"
       }
     },
     "oneOf": {
       "type": "array",
       "items": {
-        "$ref": "openapi-schema-or-reference.json"
+        "$ref": "#/definitions/schema-or-reference"
       }
     },
     "anyOf": {
       "type": "array",
       "items": {
-        "$ref": "openapi-schema-or-reference.json"
+        "$ref": "#/definitions/schema-or-reference"
       }
     },
     "items": {
-      "$ref": "openapi-schema-or-reference.json"
+      "$ref": "#/definitions/schema-or-reference"
     },
     "properties": {
       "type": "object",
       "additionalProperties": {
-        "$ref": "openapi-schema-or-reference.json"
+        "$ref": "#/definitions/schema-or-reference"
       }
     },
     "additionalProperties": {
@@ -120,7 +120,7 @@
           "$ref": "#"
         },
         {
-          "$ref": "openapi-reference.json"
+          "$ref": "#/definitions/reference"
         },
         {
           "type": "boolean"
@@ -140,7 +140,7 @@
       "default": false
     },
     "discriminator": {
-      "$ref": "openapi-discriminator.json"
+      "$ref": "#/definitions/discriminator"
     },
     "readOnly": {
       "type": "boolean",
@@ -152,18 +152,105 @@
     },
     "example": {},
     "externalDocs": {
-      "$ref": "openapi-external-documentation.json"
+      "$ref": "#/definitions/external-documentation"
     },
     "deprecated": {
       "type": "boolean",
       "default": false
     },
     "xml": {
-      "$ref": "openapi-xml.json"
+      "$ref": "#/definitions/xml"
     }
   },
   "patternProperties": {
     "^x-": {}
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "discriminator": {
+      "type": "object",
+      "required": [
+        "propertyName"
+      ],
+      "properties": {
+        "propertyName": {
+          "type": "string"
+        },
+        "mapping": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "external-documentation": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "reference": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "patternProperties": {
+        "^\\$ref$": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      }
+    },
+    "schema-or-reference": {
+      "oneOf": [
+        {
+          "$ref": "#"
+        },
+        {
+          "$ref": "#/definitions/reference"
+        }
+      ]
+    },
+    "xml": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "namespace": {
+          "type": "string",
+          "format": "uri"
+        },
+        "prefix": {
+          "type": "string"
+        },
+        "attribute": {
+          "type": "boolean",
+          "default": false
+        },
+        "wrapped": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  }
 }

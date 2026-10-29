@@ -2,6 +2,18 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
   "items": {
-    "$ref": "openapi-security-requirement.json"
+    "$ref": "#/$defs/security-requirement"
+  },
+  "$defs": {
+    "security-requirement": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#security-requirement-object",
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
   }
 }

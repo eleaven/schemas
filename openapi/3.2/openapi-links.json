@@ -2,6 +2,140 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": {
-    "$ref": "openapi-link-or-reference.json"
+    "$ref": "#/$defs/link-or-reference"
+  },
+  "$defs": {
+    "link": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#link-object",
+      "type": "object",
+      "properties": {
+        "operationRef": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "operationId": {
+          "type": "string"
+        },
+        "parameters": {
+          "$ref": "#/$defs/map-of-strings"
+        },
+        "requestBody": true,
+        "description": {
+          "type": "string"
+        },
+        "server": {
+          "$ref": "#/$defs/server"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "operationRef"
+          ]
+        },
+        {
+          "required": [
+            "operationId"
+          ]
+        }
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "link-or-reference": {
+      "if": {
+        "type": "object",
+        "required": [
+          "$ref"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/reference"
+      },
+      "else": {
+        "$ref": "#/$defs/link"
+      }
+    },
+    "map-of-strings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "reference": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#reference-object",
+      "type": "object",
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "server": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#server-object",
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "variables": {
+          "$ref": "#/$defs/server-variables"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "server-variable": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#server-variable-object",
+      "type": "object",
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "default": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "default"
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "server-variables": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/server-variable"
+      }
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
   }
 }

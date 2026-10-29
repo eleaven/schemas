@@ -2,6 +2,50 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "additionalProperties": {
-    "$ref": "openapi-example-or-reference.json"
+    "$ref": "#/definitions/example-or-reference"
+  },
+  "definitions": {
+    "example": {
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "value": {},
+        "externalValue": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "example-or-reference": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/example"
+        },
+        {
+          "$ref": "#/definitions/reference"
+        }
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "patternProperties": {
+        "^\\$ref$": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      }
+    }
   }
 }

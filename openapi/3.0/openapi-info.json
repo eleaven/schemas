@@ -17,10 +17,10 @@
       "format": "uri-reference"
     },
     "contact": {
-      "$ref": "openapi-contact.json"
+      "$ref": "#/definitions/contact"
     },
     "license": {
-      "$ref": "openapi-license.json"
+      "$ref": "#/definitions/license"
     },
     "version": {
       "type": "string"
@@ -29,5 +29,46 @@
   "patternProperties": {
     "^x-": {}
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "contact": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "license": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  }
 }

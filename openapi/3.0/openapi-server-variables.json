@@ -2,6 +2,32 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "additionalProperties": {
-    "$ref": "openapi-server-variable.json"
+    "$ref": "#/definitions/server-variable"
+  },
+  "definitions": {
+    "server-variable": {
+      "type": "object",
+      "required": [
+        "default"
+      ],
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "default": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
   }
 }

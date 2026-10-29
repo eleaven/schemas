@@ -17,10 +17,10 @@
       "format": "uri-reference"
     },
     "contact": {
-      "$ref": "openapi-contact.json"
+      "$ref": "#/$defs/contact"
     },
     "license": {
-      "$ref": "openapi-license.json"
+      "$ref": "#/$defs/license"
     },
     "version": {
       "type": "string"
@@ -30,6 +30,63 @@
     "title",
     "version"
   ],
-  "$ref": "openapi-specification-extensions.json",
-  "unevaluatedProperties": false
+  "$ref": "#/$defs/specification-extensions",
+  "unevaluatedProperties": false,
+  "$defs": {
+    "contact": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#contact-object",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "email": {
+          "type": "string",
+          "format": "email"
+        }
+      },
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "license": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#license-object",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "identifier": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "dependentSchemas": {
+        "identifier": {
+          "not": {
+            "required": [
+              "url"
+            ]
+          }
+        }
+      },
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
+  }
 }

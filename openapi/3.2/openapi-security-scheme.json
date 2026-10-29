@@ -25,7 +25,7 @@
   ],
   "allOf": [
     {
-      "$ref": "openapi-specification-extensions.json"
+      "$ref": "#/$defs/specification-extensions"
     },
     {
       "$ref": "#/$defs/type-apikey"
@@ -126,7 +126,7 @@
       "then": {
         "properties": {
           "flows": {
-            "$ref": "openapi-oauth-flows.json"
+            "$ref": "#/$defs/oauth-flows"
           },
           "oauth2MetadataUrl": {
             "type": "string",
@@ -156,6 +156,162 @@
         "required": [
           "openIdConnectUrl"
         ]
+      }
+    },
+    "map-of-strings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "oauth-flows": {
+      "type": "object",
+      "properties": {
+        "implicit": {
+          "$ref": "#/$defs/oauth-flows/$defs/implicit"
+        },
+        "password": {
+          "$ref": "#/$defs/oauth-flows/$defs/password"
+        },
+        "clientCredentials": {
+          "$ref": "#/$defs/oauth-flows/$defs/client-credentials"
+        },
+        "authorizationCode": {
+          "$ref": "#/$defs/oauth-flows/$defs/authorization-code"
+        },
+        "deviceAuthorization": {
+          "$ref": "#/$defs/oauth-flows/$defs/device-authorization"
+        }
+      },
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false,
+      "$defs": {
+        "implicit": {
+          "type": "object",
+          "properties": {
+            "authorizationUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "refreshUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "scopes": {
+              "$ref": "#/$defs/map-of-strings"
+            }
+          },
+          "required": [
+            "authorizationUrl",
+            "scopes"
+          ],
+          "$ref": "#/$defs/specification-extensions",
+          "unevaluatedProperties": false
+        },
+        "password": {
+          "type": "object",
+          "properties": {
+            "tokenUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "refreshUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "scopes": {
+              "$ref": "#/$defs/map-of-strings"
+            }
+          },
+          "required": [
+            "tokenUrl",
+            "scopes"
+          ],
+          "$ref": "#/$defs/specification-extensions",
+          "unevaluatedProperties": false
+        },
+        "client-credentials": {
+          "type": "object",
+          "properties": {
+            "tokenUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "refreshUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "scopes": {
+              "$ref": "#/$defs/map-of-strings"
+            }
+          },
+          "required": [
+            "tokenUrl",
+            "scopes"
+          ],
+          "$ref": "#/$defs/specification-extensions",
+          "unevaluatedProperties": false
+        },
+        "authorization-code": {
+          "type": "object",
+          "properties": {
+            "authorizationUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "tokenUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "refreshUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "scopes": {
+              "$ref": "#/$defs/map-of-strings"
+            }
+          },
+          "required": [
+            "authorizationUrl",
+            "tokenUrl",
+            "scopes"
+          ],
+          "$ref": "#/$defs/specification-extensions",
+          "unevaluatedProperties": false
+        },
+        "device-authorization": {
+          "type": "object",
+          "properties": {
+            "deviceAuthorizationUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "tokenUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "refreshUrl": {
+              "type": "string",
+              "format": "uri-reference"
+            },
+            "scopes": {
+              "$ref": "#/$defs/map-of-strings"
+            }
+          },
+          "required": [
+            "deviceAuthorizationUrl",
+            "tokenUrl",
+            "scopes"
+          ],
+          "$ref": "#/$defs/specification-extensions",
+          "unevaluatedProperties": false
+        }
+      }
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#specification-extensions",
+      "patternProperties": {
+        "^x-": true
       }
     }
   }

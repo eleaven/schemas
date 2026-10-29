@@ -15,7 +15,7 @@
       "$ref": "#/$defs/authorization-code"
     }
   },
-  "$ref": "openapi-specification-extensions.json",
+  "$ref": "#/$defs/specification-extensions",
   "unevaluatedProperties": false,
   "$defs": {
     "implicit": {
@@ -30,14 +30,14 @@
           "format": "uri-reference"
         },
         "scopes": {
-          "$ref": "openapi-map-of-strings.json"
+          "$ref": "#/$defs/map-of-strings"
         }
       },
       "required": [
         "authorizationUrl",
         "scopes"
       ],
-      "$ref": "openapi-specification-extensions.json",
+      "$ref": "#/$defs/specification-extensions",
       "unevaluatedProperties": false
     },
     "password": {
@@ -52,14 +52,14 @@
           "format": "uri-reference"
         },
         "scopes": {
-          "$ref": "openapi-map-of-strings.json"
+          "$ref": "#/$defs/map-of-strings"
         }
       },
       "required": [
         "tokenUrl",
         "scopes"
       ],
-      "$ref": "openapi-specification-extensions.json",
+      "$ref": "#/$defs/specification-extensions",
       "unevaluatedProperties": false
     },
     "client-credentials": {
@@ -74,14 +74,14 @@
           "format": "uri-reference"
         },
         "scopes": {
-          "$ref": "openapi-map-of-strings.json"
+          "$ref": "#/$defs/map-of-strings"
         }
       },
       "required": [
         "tokenUrl",
         "scopes"
       ],
-      "$ref": "openapi-specification-extensions.json",
+      "$ref": "#/$defs/specification-extensions",
       "unevaluatedProperties": false
     },
     "authorization-code": {
@@ -100,7 +100,7 @@
           "format": "uri-reference"
         },
         "scopes": {
-          "$ref": "openapi-map-of-strings.json"
+          "$ref": "#/$defs/map-of-strings"
         }
       },
       "required": [
@@ -108,8 +108,20 @@
         "tokenUrl",
         "scopes"
       ],
-      "$ref": "openapi-specification-extensions.json",
+      "$ref": "#/$defs/specification-extensions",
       "unevaluatedProperties": false
+    },
+    "map-of-strings": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
     }
   }
 }

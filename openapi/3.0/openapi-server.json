@@ -12,11 +12,43 @@
       "type": "string"
     },
     "variables": {
-      "$ref": "openapi-server-variables.json"
+      "$ref": "#/definitions/server-variables"
     }
   },
   "patternProperties": {
     "^x-": {}
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "server-variable": {
+      "type": "object",
+      "required": [
+        "default"
+      ],
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "default": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "server-variables": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/server-variable"
+      }
+    }
+  }
 }

@@ -15,10 +15,10 @@
       "type": "boolean"
     },
     "schema": {
-      "$dynamicRef": "openapi-schema.json#meta"
+      "$ref": "#/$defs/schema"
     },
     "content": {
-      "$ref": "openapi-content.json",
+      "$ref": "#/$defs/content",
       "minProperties": 1,
       "maxProperties": 1
     }
@@ -47,9 +47,237 @@
           "type": "boolean"
         }
       },
-      "$ref": "openapi-example-xor-examples.json"
+      "$ref": "#/$defs/example-xor-examples"
     }
   },
-  "$ref": "openapi-specification-extensions.json",
-  "unevaluatedProperties": false
+  "$ref": "#/$defs/specification-extensions",
+  "unevaluatedProperties": false,
+  "$defs": {
+    "content": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#fixed-fields-10",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/media-type"
+      },
+      "propertyNames": {
+        "format": "media-range"
+      }
+    },
+    "encoding": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#encoding-object",
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "$comment": "one or more comma-separated media-ranges",
+          "type": "string"
+        },
+        "headers": {
+          "$ref": "#/$defs/headers"
+        },
+        "style": {
+          "enum": [
+            "form",
+            "spaceDelimited",
+            "pipeDelimited",
+            "deepObject"
+          ]
+        },
+        "explode": {
+          "type": "boolean"
+        },
+        "allowReserved": {
+          "type": "boolean"
+        }
+      },
+      "dependentSchemas": {
+        "style": {
+          "properties": {
+            "allowReserved": {
+              "default": false
+            }
+          },
+          "$ref": "#/$defs/explode-for-form"
+        },
+        "explode": {
+          "properties": {
+            "style": {
+              "default": "form"
+            },
+            "allowReserved": {
+              "default": false
+            }
+          }
+        },
+        "allowReserved": {
+          "properties": {
+            "style": {
+              "default": "form"
+            }
+          },
+          "$ref": "#/$defs/explode-for-form"
+        }
+      },
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "encodings": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/encoding"
+      }
+    },
+    "example": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#example-object",
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "value": true,
+        "externalValue": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "not": {
+        "required": [
+          "value",
+          "externalValue"
+        ]
+      },
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "example-or-reference": {
+      "if": {
+        "type": "object",
+        "required": [
+          "$ref"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/reference"
+      },
+      "else": {
+        "$ref": "#/$defs/example"
+      }
+    },
+    "example-xor-examples": {
+      "properties": {
+        "example": true,
+        "examples": {
+          "$ref": "#/$defs/examples"
+        }
+      },
+      "not": {
+        "required": [
+          "example",
+          "examples"
+        ]
+      }
+    },
+    "examples": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/example-or-reference"
+      }
+    },
+    "explode-for-form": {
+      "$comment": "for encoding objects, and query and cookie parameters, style=form is the default",
+      "if": {
+        "properties": {
+          "style": {
+            "const": "form"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "explode": {
+            "default": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "explode": {
+            "default": false
+          }
+        }
+      }
+    },
+    "header-or-reference": {
+      "if": {
+        "type": "object",
+        "required": [
+          "$ref"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/reference"
+      },
+      "else": {
+        "$ref": "#"
+      }
+    },
+    "headers": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/header-or-reference"
+      }
+    },
+    "media-type": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#media-type-object",
+      "type": "object",
+      "properties": {
+        "schema": {
+          "$ref": "#/$defs/schema"
+        },
+        "encoding": {
+          "$ref": "#/$defs/encodings"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/specification-extensions"
+        },
+        {
+          "$ref": "#/$defs/example-xor-examples"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "reference": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#reference-object",
+      "type": "object",
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "schema": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#schema-object",
+      "type": [
+        "object",
+        "boolean"
+      ]
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
+  }
 }

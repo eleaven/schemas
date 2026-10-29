@@ -2,6 +2,64 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "array",
   "items": {
-    "$ref": "openapi-server.json"
+    "$ref": "#/$defs/server"
+  },
+  "$defs": {
+    "server": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#server-object",
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "variables": {
+          "$ref": "#/$defs/server-variables"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "server-variable": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#server-variable-object",
+      "type": "object",
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "default": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "default"
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "server-variables": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/server-variable"
+      }
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
   }
 }

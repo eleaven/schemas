@@ -2,6 +2,115 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "additionalProperties": {
-    "$ref": "openapi-link-or-reference.json"
+    "$ref": "#/definitions/link-or-reference"
+  },
+  "definitions": {
+    "link": {
+      "type": "object",
+      "properties": {
+        "operationId": {
+          "type": "string"
+        },
+        "operationRef": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "parameters": {
+          "type": "object",
+          "additionalProperties": {}
+        },
+        "requestBody": {},
+        "description": {
+          "type": "string"
+        },
+        "server": {
+          "$ref": "#/definitions/server"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false,
+      "not": {
+        "description": "Operation Id and Operation Ref are mutually exclusive",
+        "required": [
+          "operationId",
+          "operationRef"
+        ]
+      }
+    },
+    "link-or-reference": {
+      "oneOf": [
+        {
+          "$ref": "#/definitions/link"
+        },
+        {
+          "$ref": "#/definitions/reference"
+        }
+      ]
+    },
+    "reference": {
+      "type": "object",
+      "required": [
+        "$ref"
+      ],
+      "patternProperties": {
+        "^\\$ref$": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      }
+    },
+    "server": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "variables": {
+          "$ref": "#/definitions/server-variables"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "server-variable": {
+      "type": "object",
+      "required": [
+        "default"
+      ],
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "default": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "server-variables": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/definitions/server-variable"
+      }
+    }
   }
 }

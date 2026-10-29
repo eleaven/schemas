@@ -7,9 +7,58 @@
     ]
   },
   "then": {
-    "$ref": "openapi-reference.json"
+    "$ref": "#/$defs/reference"
   },
   "else": {
-    "$ref": "openapi-example.json"
+    "$ref": "#/$defs/example"
+  },
+  "$defs": {
+    "example": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#example-object",
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "value": true,
+        "externalValue": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "not": {
+        "required": [
+          "value",
+          "externalValue"
+        ]
+      },
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "reference": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#reference-object",
+      "type": "object",
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.1#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
   }
 }

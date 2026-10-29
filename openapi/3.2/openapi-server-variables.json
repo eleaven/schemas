@@ -2,6 +2,38 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": {
-    "$ref": "openapi-server-variable.json"
+    "$ref": "#/$defs/server-variable"
+  },
+  "$defs": {
+    "server-variable": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#server-variable-object",
+      "type": "object",
+      "properties": {
+        "enum": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1
+        },
+        "default": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "default"
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
   }
 }

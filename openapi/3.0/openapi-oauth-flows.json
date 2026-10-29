@@ -3,20 +3,135 @@
   "type": "object",
   "properties": {
     "implicit": {
-      "$ref": "openapi-implicit-oauth-flow.json"
+      "$ref": "#/definitions/implicit-oauth-flow"
     },
     "password": {
-      "$ref": "openapi-password-oauth-flow.json"
+      "$ref": "#/definitions/password-oauth-flow"
     },
     "clientCredentials": {
-      "$ref": "openapi-client-credentials-flow.json"
+      "$ref": "#/definitions/client-credentials-flow"
     },
     "authorizationCode": {
-      "$ref": "openapi-authorization-code-oauth-flow.json"
+      "$ref": "#/definitions/authorization-code-oauth-flow"
     }
   },
   "patternProperties": {
     "^x-": {}
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "authorization-code-oauth-flow": {
+      "type": "object",
+      "required": [
+        "authorizationUrl",
+        "tokenUrl",
+        "scopes"
+      ],
+      "properties": {
+        "authorizationUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "tokenUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "client-credentials-flow": {
+      "type": "object",
+      "required": [
+        "tokenUrl",
+        "scopes"
+      ],
+      "properties": {
+        "tokenUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "implicit-oauth-flow": {
+      "type": "object",
+      "required": [
+        "authorizationUrl",
+        "scopes"
+      ],
+      "properties": {
+        "authorizationUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "password-oauth-flow": {
+      "type": "object",
+      "required": [
+        "tokenUrl",
+        "scopes"
+      ],
+      "properties": {
+        "tokenUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "refreshUrl": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "scopes": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  }
 }

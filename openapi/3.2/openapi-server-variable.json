@@ -20,6 +20,14 @@
   "required": [
     "default"
   ],
-  "$ref": "openapi-specification-extensions.json",
-  "unevaluatedProperties": false
+  "$ref": "#/$defs/specification-extensions",
+  "unevaluatedProperties": false,
+  "$defs": {
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
+  }
 }

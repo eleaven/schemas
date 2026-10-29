@@ -12,11 +12,32 @@
       "type": "string"
     },
     "externalDocs": {
-      "$ref": "openapi-external-documentation.json"
+      "$ref": "#/definitions/external-documentation"
     }
   },
   "patternProperties": {
     "^x-": {}
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "definitions": {
+    "external-documentation": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  }
 }

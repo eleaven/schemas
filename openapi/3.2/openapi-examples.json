@@ -2,6 +2,101 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": {
-    "$ref": "openapi-example-or-reference.json"
+    "$ref": "#/$defs/example-or-reference"
+  },
+  "$defs": {
+    "example": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#example-object",
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "dataValue": true,
+        "serializedValue": {
+          "type": "string"
+        },
+        "value": true,
+        "externalValue": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "value",
+              "externalValue"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "value",
+              "dataValue"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "value",
+              "serializedValue"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "serializedValue",
+              "externalValue"
+            ]
+          }
+        }
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "example-or-reference": {
+      "if": {
+        "type": "object",
+        "required": [
+          "$ref"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/reference"
+      },
+      "else": {
+        "$ref": "#/$defs/example"
+      }
+    },
+    "reference": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#reference-object",
+      "type": "object",
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    }
   }
 }

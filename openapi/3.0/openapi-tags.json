@@ -2,7 +2,49 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "array",
   "items": {
-    "$ref": "openapi-tag.json"
+    "$ref": "#/definitions/tag"
   },
-  "uniqueItems": true
+  "uniqueItems": true,
+  "definitions": {
+    "external-documentation": {
+      "type": "object",
+      "required": [
+        "url"
+      ],
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    },
+    "tag": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "externalDocs": {
+          "$ref": "#/definitions/external-documentation"
+        }
+      },
+      "patternProperties": {
+        "^x-": {}
+      },
+      "additionalProperties": false
+    }
+  }
 }

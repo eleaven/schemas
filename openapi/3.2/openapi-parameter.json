@@ -27,10 +27,10 @@
       "type": "boolean"
     },
     "schema": {
-      "$dynamicRef": "openapi-schema.json#meta"
+      "$ref": "#/$defs/schema"
     },
     "content": {
-      "$ref": "openapi-content.json",
+      "$ref": "#/$defs/content",
       "minProperties": 1,
       "maxProperties": 1
     }
@@ -53,10 +53,10 @@
   ],
   "allOf": [
     {
-      "$ref": "openapi-example-xor-examples.json"
+      "$ref": "#/$defs/example-xor-examples"
     },
     {
-      "$ref": "openapi-specification-extensions.json"
+      "$ref": "#/$defs/specification-extensions"
     },
     {
       "if": {
@@ -118,7 +118,7 @@
         "properties": {
           "name": {
             "$comment": "see RFC9110 §5.1",
-            "$ref": "openapi-token.json"
+            "$ref": "#/$defs/token"
           }
         }
       }
@@ -230,7 +230,7 @@
                 "default": false
               }
             },
-            "$ref": "openapi-explode-for-form.json"
+            "$ref": "#/$defs/explode-for-form"
           }
         },
         "styles-for-cookie": {
@@ -274,5 +274,388 @@
       }
     }
   },
-  "unevaluatedProperties": false
+  "unevaluatedProperties": false,
+  "$defs": {
+    "content": {
+      "$comment": "The `content` object is a property of:\nParameter Object: https://spec.openapis.org/oas/v3.2#parameter-object\nRequest Body Object: https://spec.openapis.org/oas/v3.2#request-body-object\nResponse Object: https://spec.openapis.org/oas/v3.2#response-object\nHeader Object: https://spec.openapis.org/oas/v3.2#header-object\n",
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/media-type-or-reference"
+      },
+      "propertyNames": {
+        "format": "media-range"
+      }
+    },
+    "encoding": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#encoding-object",
+      "type": "object",
+      "properties": {
+        "contentType": {
+          "$comment": "one or more comma-separated media-ranges",
+          "type": "string"
+        },
+        "headers": {
+          "$ref": "#/$defs/headers",
+          "propertyNames": {
+            "$ref": "#/$defs/token"
+          }
+        },
+        "style": {
+          "enum": [
+            "form",
+            "spaceDelimited",
+            "pipeDelimited",
+            "deepObject"
+          ]
+        },
+        "explode": {
+          "type": "boolean"
+        },
+        "allowReserved": {
+          "type": "boolean"
+        },
+        "encoding": {
+          "$ref": "#/$defs/encodings"
+        },
+        "prefixEncoding": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/encoding"
+          }
+        },
+        "itemEncoding": {
+          "$ref": "#/$defs/encoding"
+        }
+      },
+      "dependentSchemas": {
+        "encoding": {
+          "properties": {
+            "prefixEncoding": false,
+            "itemEncoding": false
+          }
+        },
+        "style": {
+          "properties": {
+            "allowReserved": {
+              "default": false
+            }
+          },
+          "$ref": "#/$defs/explode-for-form"
+        },
+        "explode": {
+          "properties": {
+            "style": {
+              "default": "form"
+            },
+            "allowReserved": {
+              "default": false
+            }
+          }
+        },
+        "allowReserved": {
+          "properties": {
+            "style": {
+              "default": "form"
+            }
+          },
+          "$ref": "#/$defs/explode-for-form"
+        }
+      },
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "encodings": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/encoding"
+      }
+    },
+    "example": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#example-object",
+      "type": "object",
+      "properties": {
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "dataValue": true,
+        "serializedValue": {
+          "type": "string"
+        },
+        "value": true,
+        "externalValue": {
+          "type": "string",
+          "format": "uri-reference"
+        }
+      },
+      "allOf": [
+        {
+          "not": {
+            "required": [
+              "value",
+              "externalValue"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "value",
+              "dataValue"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "value",
+              "serializedValue"
+            ]
+          }
+        },
+        {
+          "not": {
+            "required": [
+              "serializedValue",
+              "externalValue"
+            ]
+          }
+        }
+      ],
+      "$ref": "#/$defs/specification-extensions",
+      "unevaluatedProperties": false
+    },
+    "example-or-reference": {
+      "if": {
+        "type": "object",
+        "required": [
+          "$ref"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/reference"
+      },
+      "else": {
+        "$ref": "#/$defs/example"
+      }
+    },
+    "example-xor-examples": {
+      "properties": {
+        "example": true,
+        "examples": {
+          "$ref": "#/$defs/examples"
+        }
+      },
+      "not": {
+        "required": [
+          "example",
+          "examples"
+        ]
+      }
+    },
+    "examples": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/example-or-reference"
+      }
+    },
+    "explode-for-form": {
+      "$comment": "for encoding objects, and query and cookie parameters, style=form is the default",
+      "if": {
+        "properties": {
+          "style": {
+            "const": "form"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "explode": {
+            "default": true
+          }
+        }
+      },
+      "else": {
+        "properties": {
+          "explode": {
+            "default": false
+          }
+        }
+      }
+    },
+    "header": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#header-object",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "type": "boolean"
+        },
+        "deprecated": {
+          "default": false,
+          "type": "boolean"
+        },
+        "schema": {
+          "$ref": "#/$defs/schema"
+        },
+        "content": {
+          "$ref": "#/$defs/content",
+          "minProperties": 1,
+          "maxProperties": 1
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "schema"
+          ]
+        },
+        {
+          "required": [
+            "content"
+          ]
+        }
+      ],
+      "dependentSchemas": {
+        "schema": {
+          "properties": {
+            "style": {
+              "default": "simple",
+              "const": "simple"
+            },
+            "explode": {
+              "default": false,
+              "type": "boolean"
+            }
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/example-xor-examples"
+        },
+        {
+          "$ref": "#/$defs/specification-extensions"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "header-or-reference": {
+      "if": {
+        "type": "object",
+        "required": [
+          "$ref"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/reference"
+      },
+      "else": {
+        "$ref": "#/$defs/header"
+      }
+    },
+    "headers": {
+      "type": "object",
+      "additionalProperties": {
+        "$ref": "#/$defs/header-or-reference"
+      }
+    },
+    "media-type": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#media-type-object",
+      "type": "object",
+      "properties": {
+        "description": {
+          "type": "string"
+        },
+        "schema": {
+          "$ref": "#/$defs/schema"
+        },
+        "itemSchema": {
+          "$ref": "#/$defs/schema"
+        },
+        "encoding": {
+          "$ref": "#/$defs/encodings"
+        },
+        "prefixEncoding": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/encoding"
+          }
+        },
+        "itemEncoding": {
+          "$ref": "#/$defs/encoding"
+        }
+      },
+      "dependentSchemas": {
+        "encoding": {
+          "properties": {
+            "prefixEncoding": false,
+            "itemEncoding": false
+          }
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/$defs/example-xor-examples"
+        },
+        {
+          "$ref": "#/$defs/specification-extensions"
+        }
+      ],
+      "unevaluatedProperties": false
+    },
+    "media-type-or-reference": {
+      "if": {
+        "type": "object",
+        "required": [
+          "$ref"
+        ]
+      },
+      "then": {
+        "$ref": "#/$defs/reference"
+      },
+      "else": {
+        "$ref": "#/$defs/media-type"
+      }
+    },
+    "reference": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#reference-object",
+      "type": "object",
+      "properties": {
+        "$ref": {
+          "type": "string",
+          "format": "uri-reference"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        }
+      }
+    },
+    "schema": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#schema-object",
+      "type": [
+        "object",
+        "boolean"
+      ]
+    },
+    "specification-extensions": {
+      "$comment": "https://spec.openapis.org/oas/v3.2#specification-extensions",
+      "patternProperties": {
+        "^x-": true
+      }
+    },
+    "token": {
+      "$comment": "see https://www.rfc-editor.org/rfc/rfc9110.html#section-5.6.2",
+      "type": "string",
+      "pattern": "^[0-9A-Za-z!#$%&'*+.^_`|~-]+$"
+    }
+  }
 }
