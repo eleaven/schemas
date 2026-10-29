@@ -163,3 +163,10 @@ configuration file that embeds OpenAPI servers:
   }
 }
 ```
+
+## License
+
+The generated schemas are derived from the [OpenAPI Initiative schemas](https://github.com/OAI/spec.openapis.org),
+licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). They are modified by
+[`update.py`](update.py): split into separate files, with renamed definitions and added collections. The rest of this
+folder is under the repository's [MIT License](../LICENSE).
