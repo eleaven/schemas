@@ -6,6 +6,8 @@ downloaded, and every definition is written to its own file in ``<version>/``:
 
 - ``openapi.json``: the OpenAPI document itself (upstream ``schema``);
 - ``openapi-base.json``: same, with Schema Object validation (upstream ``schema-base``);
+- ``openapi-resource.json``: a Components Object that also accepts named Path Items in ``paths``,
+  and ``openapi-resource-base.json`` with Schema Object validation;
 - ``openapi-<name>.json``: one file per object (``openapi-parameter.json``, ``openapi-path-item.json``, …);
 - ``openapi-<name>-or-reference.json``: the object or a Reference Object;
 - ``openapi-<collection>.json``: arrays and maps of objects (``openapi-parameters.json``, …).
@@ -29,6 +31,8 @@ GITHUB_API_URL = "https://api.github.com/repos/OAI/spec.openapis.org/contents/oa
 ROOT = "openapi"
 ROOT_BASE = "openapi-base"
 PREFIX = "openapi-"
+RESOURCE = "resource"
+RESOURCE_BASE = "resource-base"
 REFERENCE = "reference"
 
 # Upstream names that clash with the collections below.
@@ -58,6 +62,11 @@ ITEMS_KEYWORD = {"array": "items", "map": "additionalProperties"}
 JSON_TYPE = {"array": "array", "map": "object"}
 
 DRAFT_04 = "http://json-schema.org/draft-04/schema#"
+
+RESOURCE_DESCRIPTION = (
+    "Not part of the OpenAPI Specification: a Components Object that also accepts named Path Items in `paths`, "
+    "to describe a resource in a single file."
+)
 
 
 def fetch(url: str, headers: dict[str, str] | None = None):
@@ -210,10 +219,29 @@ class Splitter:
         self.docs = {name: transform(doc, replace) for name, doc in self.docs.items()}
         self.docs |= collections
 
+    def add_resource(self):
+        """Add a Components Object that also accepts named Path Items in ``paths``."""
+        resource = copy.deepcopy(self.docs["components"])
+        resource.pop("$comment", None)
+        path_item = {"$ref": filename("path-item")}
+        if self.draft_04:
+            name_pattern = next(iter(resource["properties"]["schemas"]["patternProperties"]))
+            paths = {"type": "object", "patternProperties": {name_pattern: path_item}, "additionalProperties": False}
+        else:
+            property_names = next(iter(resource["patternProperties"].values()))["propertyNames"]
+            paths = {"type": "object", "additionalProperties": path_item, "propertyNames": property_names}
+        resource["properties"] = {"paths": paths} | resource["properties"]
+        self.docs[RESOURCE] = {"description": RESOURCE_DESCRIPTION} | resource
+
     def files(self) -> dict[str, dict]:
         docs = dict(self.docs)
         if self.base is not None:
             docs[ROOT_BASE] = self.base
+            docs[RESOURCE_BASE] = {
+                "description": RESOURCE_DESCRIPTION + " Schema Objects are validated with the OpenAPI dialect.",
+                "$ref": filename(RESOURCE),
+                "$defs": copy.deepcopy(self.base["$defs"]),
+            }
         return {filename(name): self.finalize(name, doc) for name, doc in docs.items()}
 
     def finalize(self, name: str, doc: dict) -> dict:
@@ -240,6 +268,7 @@ def update(version: str, output: Path):
     if splitter.draft_04:
         splitter.add_or_references()
     splitter.add_collections()
+    splitter.add_resource()
     files = splitter.files()
 
     output.mkdir(exist_ok=True)

@@ -23,6 +23,16 @@ The files are generated from the latest upstream schemas by [`update.py`](update
 `openapi-base.json` is stricter, but it references the dialect and meta-schemas hosted on spec.openapis.org, so
 the validator needs network access. In 3.0, `openapi.json` already validates Schema Objects.
 
+### Resource files
+
+| File | Validates |
+| --- | --- |
+| `openapi-resource.json` | A file grouping everything about one resource: a Components Object (`schemas`, `parameters`, `responses`…) with an extra `paths` map of named Path Items. |
+| `openapi-resource-base.json` | 3.1 and 3.2 only. Same as `openapi-resource.json`, and Schema Objects are also validated against the OpenAPI JSON Schema dialect. |
+
+This format isn't part of the OpenAPI Specification: it's meant for documents split into one file per resource,
+whose parts are referenced from the main document (see [Resource files](#resource-files-1) below).
+
 ### Sub-schemas
 
 Every other file validates a single part of a document and is named `openapi-<name>.json`:
@@ -57,7 +67,7 @@ collection: the Callback Object is `openapi-callback.json` (upstream `callbacks`
 
 > [!NOTE]
 > In 3.1 and 3.2, a sub-schema used on its own doesn't validate the Schema Objects it contains: only
-> `openapi-base.json` does.
+> `openapi-base.json` and `openapi-resource-base.json` do.
 
 ## Usage
 
@@ -95,6 +105,46 @@ get:
 
 ```bash
 check-jsonschema --schemafile https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi-path-item.json paths/users.yaml
+```
+
+### Resource files
+
+A resource file defines path items and components side by side:
+
+```yaml
+# yaml-language-server: $schema=https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi-resource-base.json
+paths:
+  byId:
+    get:
+      summary: Get a product
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The product
+          content:
+            application/json:
+              schema:
+                $ref: "#/schemas/Product"
+schemas:
+  Product:
+    type: object
+    properties:
+      id:
+        type: string
+        format: uuid
+```
+
+The main document then references its parts:
+
+```yaml
+paths:
+  /products/{id}:
+    $ref: "./products.yaml#/paths/byId"
 ```
 
 ### In your own schemas
