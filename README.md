@@ -72,6 +72,6 @@ check-jsonschema --schemafile https://cdn.jsdelivr.net/gh/eleaven/schemas@main/o
 
 ## Automatic updates
 
-Each schema folder has an `update.py` script that downloads the latest upstream schema and applies this
+Each schema folder has a `generate.py` script that downloads the latest upstream schema and applies this
 repository's improvements on top of it. The [CI workflow](.github/workflows/ci.yaml) runs every week, runs the
 script of every folder in parallel, and commits the results to `main` if anything changed.

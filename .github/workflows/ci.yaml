@@ -7,7 +7,7 @@ on:
   push:
     branches: [main]
     paths:
-      - "*/update.py"
+      - "*/generate.py"
       - .github/workflows/ci.yaml
 
 permissions:
@@ -25,11 +25,11 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Find update scripts
+      - name: Find generation scripts
         id: find
-        run: echo "folders=$(ls -d */update.py | xargs -n1 dirname | jq -Rcs 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
+        run: echo "folders=$(ls -d */generate.py | xargs -n1 dirname | jq -Rcs 'split("\n")[:-1]')" >> "$GITHUB_OUTPUT"
 
-  update:
+  generate:
     needs: discover
     runs-on: ubuntu-latest
     strategy:
@@ -43,8 +43,8 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Update ${{ matrix.folder }}
-        run: python ${{ matrix.folder }}/update.py
+      - name: Generate ${{ matrix.folder }}
+        run: python ${{ matrix.folder }}/generate.py
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -54,9 +54,9 @@ jobs:
           path: ${{ matrix.folder }}
 
   commit:
-    needs: update
+    needs: generate
     # Commit the folders that were updated, even if others failed.
-    if: ${{ !cancelled() && needs.update.result != 'skipped' }}
+    if: ${{ !cancelled() && needs.generate.result != 'skipped' }}
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -72,8 +72,8 @@ jobs:
           for artifact in "$RUNNER_TEMP"/schemas/schemas-*/; do
             folder=$(basename "$artifact")
             folder="${folder#schemas-}"
-            # Only replace a top-level folder that has an update script.
-            [ -n "$folder" ] && [ -f "$folder/update.py" ] || continue
+            # Only replace a top-level folder that has a generation script.
+            [ -n "$folder" ] && [ -f "$folder/generate.py" ] || continue
             rm -rf -- "./$folder"
             cp -r "$artifact" "./$folder"
           done
