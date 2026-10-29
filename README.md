@@ -21,7 +21,7 @@ upstream specification.
 
 | Schema | Upstream | Documentation | Status |
 | --- | --- | --- | --- |
-| OpenAPI | [OpenAPI Initiative](https://spec.openapis.org/) | [`openapi/README.md`](openapi/README.md) | [![OpenAPI](https://github.com/eleaven/schemas/actions/workflows/openapi.yaml/badge.svg)](https://github.com/eleaven/schemas/actions/workflows/openapi.yaml) |
+| OpenAPI | [OpenAPI Initiative](https://spec.openapis.org/) | [`openapi/README.md`](openapi/README.md) | [![CI](https://github.com/eleaven/schemas/actions/workflows/ci.yaml/badge.svg)](https://github.com/eleaven/schemas/actions/workflows/ci.yaml) |
 
 ## Using the schemas
 
@@ -72,9 +72,6 @@ check-jsonschema --schemafile https://cdn.jsdelivr.net/gh/eleaven/schemas@main/o
 
 ## Automatic updates
 
-Each schema has its own GitHub Actions workflow in [`.github/workflows`](.github/workflows) (for example
-[`openapi.yaml`](.github/workflows/openapi.yaml)), which runs every week. On each run, the workflow:
-
-1. downloads the latest upstream schema;
-2. applies this repository's improvements on top of it;
-3. commits the result to `main` if anything changed.
+Each schema folder has an `update.py` script that downloads the latest upstream schema and applies this
+repository's improvements on top of it. The [CI workflow](.github/workflows/ci.yaml) runs every week, runs the
+script of every folder in parallel, and commits the results to `main` if anything changed.
