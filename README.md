@@ -11,7 +11,8 @@ The schemas in this repository start from the upstream version and improve it, f
 
 - fixing mistakes or inconsistencies in the upstream schema;
 - adding stricter constraints where the specification allows it;
-- splitting definitions into reusable sub-schemas.
+- splitting definitions into reusable sub-schemas;
+- making the schemas compatible with every IDE.
 
 The goal is a better experience in IDEs and more reliable validation in CI, while staying compatible with the
 upstream specification.
@@ -25,7 +26,10 @@ upstream specification.
 ## Using the schemas
 
 Every schema in this repository can be referenced by URL, for example in a `$schema` keyword or in your editor
-settings. Two sources are available:
+settings. Each file is self-contained: the schemas it needs are embedded in its definitions, so it works on its own
+in any editor, including JetBrains IDEs which don't follow relative `$ref`.
+
+Two sources are available:
 
 | Source | URL pattern |
 | --- | --- |

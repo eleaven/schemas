@@ -12,6 +12,9 @@ downloaded, and every definition is written to its own file in ``<version>/``:
 - ``openapi-<name>-or-reference.json``: the object or a Reference Object;
 - ``openapi-<collection>.json``: arrays and maps of objects (``openapi-parameters.json``, …).
 
+Every file is self-contained: the schemas it references are embedded in its definitions, so it can be used on
+its own by tools that don't resolve relative ``$ref`` (such as JetBrains IDEs).
+
 Set ``GITHUB_TOKEN`` to avoid the GitHub API rate limit used to find the latest versions.
 """
 
@@ -234,29 +237,84 @@ class Splitter:
         self.docs[RESOURCE] = {"description": RESOURCE_DESCRIPTION} | resource
 
     def files(self) -> dict[str, dict]:
-        docs = dict(self.docs)
+        files = {filename(name): self.bundle(name, self.docs) for name in self.docs}
         if self.base is not None:
-            docs[ROOT_BASE] = self.base
-            docs[RESOURCE_BASE] = {
-                "description": RESOURCE_DESCRIPTION + " Schema Objects are validated with the OpenAPI dialect.",
-                "$ref": filename(RESOURCE),
-                "$defs": copy.deepcopy(self.base["$defs"]),
+            # The base files validate every Schema Object against the OpenAPI dialect: instead of overriding
+            # the dynamic anchor like upstream, the "schema" definition is replaced by the dialect.
+            base_defs = copy.deepcopy(self.base["$defs"])
+            dialect_ref = {"$ref": "#/$defs/dialect"}
+
+            def inline_dialect(node: dict, _prop):
+                return copy.deepcopy(base_defs["dialect"]) if node == dialect_ref else node
+
+            meta = transform(base_defs.pop("schema"), inline_dialect)
+            meta.pop("$dynamicAnchor")
+            docs = self.docs | {
+                "schema": meta,
+                ROOT_BASE: self.base | {"$defs": base_defs},
+                RESOURCE_BASE: {
+                    "description": RESOURCE_DESCRIPTION + " Schema Objects are validated with the OpenAPI dialect.",
+                    "$ref": filename(RESOURCE),
+                },
             }
-        return {filename(name): self.finalize(name, doc) for name, doc in docs.items()}
+            for name in (ROOT_BASE, RESOURCE_BASE):
+                files[filename(name)] = self.bundle(name, docs)
+        return files
 
-    def finalize(self, name: str, doc: dict) -> dict:
-        own_file = filename(name)
+    def bundle(self, name: str, docs: dict[str, dict]) -> dict:
+        """Return ``docs[name]`` with every schema it references embedded in its definitions."""
+        defs_keyword = "definitions" if self.draft_04 else "$defs"
+        names = {filename(doc_name): doc_name for doc_name in docs}
 
-        def localize(node: dict, _prop):
+        def target(value: str, doc_name: str) -> tuple[str, str] | None:
+            if value.startswith("#"):
+                return doc_name, value[1:]
+            if "://" in value:
+                return None
+            file, _, fragment = value.partition("#")
+            return names[file], fragment
+
+        def references(node: dict, _prop):
             for keyword in ("$ref", "$dynamicRef"):
-                value = node.get(keyword)
-                if isinstance(value, str) and value.partition("#")[0] == own_file:
-                    node[keyword] = "#" + value.partition("#")[2]
+                if isinstance(node.get(keyword), str) and (found := target(node[keyword], "")):
+                    referenced.add(found[0])
             return node
 
-        doc = transform(doc, localize)
-        doc.pop("$schema", None)
-        return {"$schema": self.dialect} | doc
+        included, pending = set(), [name]
+        while pending:
+            referenced = set()
+            transform(docs[pending.pop()], references)
+            pending += referenced - included - {name, ""}
+            included |= referenced - {name, ""}
+
+        def rewrite(doc_name: str):
+            def replace(node: dict, _prop):
+                node.pop("$dynamicAnchor", None)
+                result = {}
+                for key, value in node.items():
+                    if key in ("$ref", "$dynamicRef") and isinstance(value, str) and (found := target(value, doc_name)):
+                        ref_name, fragment = found
+                        if key == "$dynamicRef":
+                            # Points to a $dynamicAnchor, always at the root of its file.
+                            fragment = ""
+                        location = "" if ref_name == name else f"/{defs_keyword}/{ref_name}"
+                        key, value = "$ref", f"#{location}{fragment}"
+                    result[key] = value
+                return result
+
+            return replace
+
+        root = transform(copy.deepcopy(docs[name]), rewrite(name))
+        root.pop("$schema", None)
+        defs = root.get(defs_keyword, {})
+        for doc_name in sorted(included):
+            if doc_name in defs:
+                raise ValueError(f"{filename(name)}: {defs_keyword}/{doc_name} already exists")
+            defs[doc_name] = transform(copy.deepcopy(docs[doc_name]), rewrite(doc_name))
+            defs[doc_name].pop("$schema", None)
+        if defs:
+            root[defs_keyword] = defs
+        return {"$schema": self.dialect} | root
 
 
 def update(version: str, output: Path):
