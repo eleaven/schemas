@@ -1,5 +1,6 @@
 # JSON Schemas
 
+[![CI](https://github.com/eleaven/schemas/actions/workflows/ci.yaml/badge.svg)](https://github.com/eleaven/schemas/actions/workflows/ci.yaml)
 [![Last commit](https://img.shields.io/github/last-commit/eleaven/schemas/main)](https://github.com/eleaven/schemas/commits/main)
 [![License](https://img.shields.io/github/license/eleaven/schemas)](LICENSE)
 
@@ -19,9 +20,9 @@ upstream specification.
 
 ## Schema catalog
 
-| Schema | Upstream | Documentation | Status |
-| --- | --- | --- | --- |
-| OpenAPI | [OpenAPI Initiative](https://spec.openapis.org/) | [`openapi/README.md`](openapi/README.md) | [![CI](https://github.com/eleaven/schemas/actions/workflows/ci.yaml/badge.svg)](https://github.com/eleaven/schemas/actions/workflows/ci.yaml) |
+| Schema | Upstream | Documentation |
+| --- | --- | --- |
+| OpenAPI | [OpenAPI Initiative](https://spec.openapis.org/) | [`openapi/README.md`](openapi/README.md) |
 
 ## Using the schemas
 
