@@ -1,6 +1,7 @@
 # JSON Schemas
 
 [![OpenAPI workflow](https://img.shields.io/github/actions/workflow/status/eleaven/schemas/openapi.yaml?branch=main&label=openapi)](https://github.com/eleaven/schemas/actions/workflows/openapi.yaml)
+[![License](https://img.shields.io/github/license/eleaven/schemas)](LICENSE)
 [![Last commit](https://img.shields.io/github/last-commit/eleaven/schemas/main)](https://github.com/eleaven/schemas/commits/main)
 
 Improved JSON Schemas, automatically kept up to date with their upstream sources by GitHub Actions.
