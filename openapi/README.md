@@ -9,7 +9,7 @@ of a document can be validated on its own.
 | 3.1 | [`3.1`](3.1) | Draft 2020-12 | [`oas/3.1/schema`](https://github.com/OAI/spec.openapis.org/tree/main/oas/3.1/schema/), [`oas/3.1/schema-base`](https://github.com/OAI/spec.openapis.org/tree/main/oas/3.1/schema-base/) |
 | 3.2 | [`3.2`](3.2) | Draft 2020-12 | [`oas/3.2/schema`](https://github.com/OAI/spec.openapis.org/tree/main/oas/3.2/schema/), [`oas/3.2/schema-base`](https://github.com/OAI/spec.openapis.org/tree/main/oas/3.2/schema-base/) |
 
-The files are generated from the latest upstream schemas by [`update.py`](update.py). Don't edit them by hand.
+The files are generated from the latest upstream schemas by [`generate.py`](generate.py). Don't edit them by hand.
 
 ## Files
 
@@ -168,5 +168,5 @@ configuration file that embeds OpenAPI servers:
 
 The generated schemas are derived from the [OpenAPI Initiative schemas](https://github.com/OAI/spec.openapis.org),
 licensed under the [Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0). They are modified by
-[`update.py`](update.py): split into separate files, with renamed definitions and added collections. The rest of this
+[`generate.py`](generate.py): split into separate files, with renamed definitions and added collections. The rest of this
 folder is under the repository's [MIT License](../LICENSE).
