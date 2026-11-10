@@ -1,19 +1,16 @@
 #!/usr/bin/env python3
-"""Fetch the upstream OpenAPI JSON Schemas and split them into reusable sub-schemas.
+"""Fetch the upstream OpenAPI JSON Schemas and adapt them for editors and validators.
 
-For each OpenAPI version, the latest dated schema published on https://spec.openapis.org is
-downloaded, and every definition is written to its own file in ``<version>/``:
+For each OpenAPI version, the latest dated schemas published on https://spec.openapis.org are downloaded and
+written to ``<version>/``:
 
-- ``openapi.json``: the OpenAPI document itself (upstream ``schema``);
-- ``openapi-base.json``: same, with Schema Object validation (upstream ``schema-base``);
-- ``openapi-resource.json``: a Components Object that also accepts named Path Items in ``paths``,
-  and ``openapi-resource-base.json`` with Schema Object validation;
-- ``openapi-<name>.json``: one file per object (``openapi-parameter.json``, ``openapi-path-item.json``, …);
-- ``openapi-<name>-or-reference.json``: the object or a Reference Object;
-- ``openapi-<collection>.json``: arrays and maps of objects (``openapi-parameters.json``, …).
+- ``openapi.json``: an OpenAPI document (upstream ``schema``);
+- ``openapi-base.json``: same, with Schema Object validation (upstream ``schema-base``, 3.1 and later);
+- ``openapi-resource.json``: a Components Object that also accepts named Path Items in ``paths``;
+- ``openapi-resource-base.json``: same, with Schema Object validation (3.1 and later).
 
-Every file is self-contained: the schemas it references are embedded in its definitions, so it can be used on
-its own by tools that don't resolve relative ``$ref`` (such as JetBrains IDEs).
+Every file is self-contained and has no ``$dynamicRef``, so it works in tools that resolve neither references to
+other files nor dynamic references (such as JetBrains IDEs).
 
 Set ``GITHUB_TOKEN`` to avoid the GitHub API rate limit used to find the latest versions.
 """
@@ -31,45 +28,11 @@ VERSIONS = ("3.0", "3.1", "3.2")
 SPEC_URL = "https://spec.openapis.org/oas/{version}/{kind}/{date}"
 GITHUB_API_URL = "https://api.github.com/repos/OAI/spec.openapis.org/contents/oas/{version}/{kind}"
 
-ROOT = "openapi"
-ROOT_BASE = "openapi-base"
-PREFIX = "openapi-"
-RESOURCE = "resource"
-RESOURCE_BASE = "resource-base"
-REFERENCE = "reference"
-
-# Upstream names that clash with the collections below.
-RENAMES = {
-    "callbacks": "callback",
-    "callbacks-or-reference": "callback-or-reference",
-    "examples": "example-xor-examples",
-}
-
-# Collection name -> (property names it applies to, kind, item schema).
-COLLECTIONS = {
-    "servers": ({"servers"}, "array", "server"),
-    "parameters": ({"parameters"}, "array", "parameter-or-reference"),
-    "security": ({"security"}, "array", "security-requirement"),
-    "tags": ({"tags"}, "array", "tag"),
-    "webhooks": ({"webhooks"}, "map", "path-item"),
-    "content": ({"content"}, "map", "media-type"),
-    "headers": ({"headers"}, "map", "header-or-reference"),
-    "links": ({"links"}, "map", "link-or-reference"),
-    "examples": ({"examples"}, "map", "example-or-reference"),
-    "callbacks": ({"callbacks"}, "map", "callback-or-reference"),
-    "encodings": ({"encoding"}, "map", "encoding"),
-    "server-variables": ({"variables"}, "map", "server-variable"),
-}
-
-ITEMS_KEYWORD = {"array": "items", "map": "additionalProperties"}
-JSON_TYPE = {"array": "array", "map": "object"}
-
-DRAFT_04 = "http://json-schema.org/draft-04/schema#"
-
 RESOURCE_DESCRIPTION = (
     "Not part of the OpenAPI Specification: a Components Object that also accepts named Path Items in `paths`, "
     "to describe a resource in a single file."
 )
+BASE_DESCRIPTION = " Schema Objects are validated with the OpenAPI dialect."
 
 
 def fetch(url: str, headers: dict[str, str] | None = None):
@@ -92,229 +55,92 @@ def latest_url(version: str, kind: str) -> str | None:
     return SPEC_URL.format(version=version, kind=kind, date=max(dates)) if dates else None
 
 
-def filename(name: str) -> str:
-    return f"{name}.json" if name in (ROOT, ROOT_BASE) else f"{PREFIX}{name}.json"
-
-
-def kebab(name: str) -> str:
-    name = name.replace("OAuth", "Oauth")
-    name = re.sub(r"([A-Z]+)([A-Z][a-z])", r"\1-\2", name)
-    name = re.sub(r"([a-z0-9])([A-Z])", r"\1-\2", name)
-    return RENAMES.get(name.lower(), name.lower())
-
-
-def transform(node, fn, prop: str | None = None):
-    """Apply ``fn(schema, property_name)`` bottom-up to every dict of ``node``."""
+def transform(node, fn):
+    """Apply ``fn(dict)`` bottom-up to every dict of ``node``."""
     if isinstance(node, list):
         return [transform(item, fn) for item in node]
     if not isinstance(node, dict):
         return node
-    result = {}
-    for key, value in node.items():
-        if key == "properties" and isinstance(value, dict):
-            result[key] = {name: transform(schema, fn, name) for name, schema in value.items()}
-        else:
-            result[key] = transform(value, fn)
-    return fn(result, prop)
+    return fn({key: transform(value, fn) for key, value in node.items()})
 
 
-class Splitter:
-    def __init__(self, schema: dict, base: dict | None):
-        self.dialect = schema["$schema"]
-        self.draft_04 = self.dialect == DRAFT_04
-        defs_keyword = "definitions" if self.draft_04 else "$defs"
-        self.defs_prefix = f"#/{defs_keyword}/"
-        self.upstream_id = schema.get("$id") or schema.get("id")
+def resource(schema: dict) -> dict:
+    """Return the Components Object of ``schema``, with an extra ``paths`` map of named Path Items."""
+    keyword = "definitions" if "definitions" in schema else "$defs"
+    defs = schema[keyword]
 
-        root = copy.deepcopy(schema)
-        definitions = root.pop(defs_keyword)
-        root.pop("$id", None)
-        root.pop("id", None)
-        self.names = {name: kebab(name) for name in definitions}
-        self.docs = {ROOT: root} | {self.names[name]: copy.deepcopy(d) for name, d in definitions.items()}
-        self.anchors = {
-            doc["$dynamicAnchor"]: name for name, doc in self.docs.items() if "$dynamicAnchor" in doc
-        }
-        self.docs = {name: transform(doc, self.rewrite_refs) for name, doc in self.docs.items()}
+    def definition(ref: str) -> dict:
+        return defs[ref.removeprefix(f"#/{keyword}/")]
 
-        self.base = None
-        if base is not None:
-            if base["$ref"] != self.upstream_id:
-                raise ValueError(f"{base['$id']} references {base['$ref']}, expected {self.upstream_id}")
-            self.base = copy.deepcopy(base)
-            self.base.pop("$id")
-            self.base["$ref"] = filename(ROOT)
+    components = copy.deepcopy(definition(schema["properties"]["components"]["$ref"]))
+    paths = definition(schema["properties"]["paths"]["$ref"])
+    path_item = next(item for pattern, item in paths["patternProperties"].items() if re.match(pattern, "/"))
+    # Path Item names follow the same rule as the names of the other components.
+    if keyword == "definitions":
+        name_pattern = next(iter(components["properties"]["schemas"]["patternProperties"]))
+        named_paths = {"type": "object", "patternProperties": {name_pattern: path_item}, "additionalProperties": False}
+    else:
+        property_names = next(iter(components["patternProperties"].values()))["propertyNames"]
+        named_paths = {"type": "object", "additionalProperties": path_item, "propertyNames": property_names}
 
-    def rewrite_refs(self, node: dict, _prop):
-        ref = node.get("$ref")
-        if isinstance(ref, str) and ref.startswith(self.defs_prefix):
-            name, _, rest = ref.removeprefix(self.defs_prefix).partition("/")
-            node["$ref"] = filename(self.names[name]) + (f"#/{rest}" if rest else "")
-        elif ref == "#":
-            node["$ref"] = filename(ROOT)
-        dynamic_ref = node.get("$dynamicRef")
-        if isinstance(dynamic_ref, str) and dynamic_ref.startswith("#"):
-            node["$dynamicRef"] = filename(self.anchors[dynamic_ref[1:]]) + dynamic_ref
+    components.pop("$comment", None)
+    components["properties"] = {"paths": named_paths} | components["properties"]
+    return {"$schema": schema["$schema"], "description": RESOURCE_DESCRIPTION} | components | {keyword: defs}
+
+
+def anchors(defs: dict) -> dict[str, str]:
+    return {definition["$dynamicAnchor"]: name for name, definition in defs.items() if "$dynamicAnchor" in definition}
+
+
+def with_base(doc: dict, base: dict) -> dict:
+    """Validate the Schema Objects of ``doc`` with the OpenAPI dialect, like upstream ``schema-base``.
+
+    Upstream overrides a ``$dynamicAnchor`` from another file; here the anchored definition is replaced.
+    """
+    doc = copy.deepcopy(doc)
+    defs = doc["$defs"]
+    base_defs = copy.deepcopy(base["$defs"])
+    ((anchor, meta_name),) = anchors(base_defs).items()
+    meta = base_defs.pop(meta_name)
+    if conflicts := defs.keys() & base_defs.keys():
+        raise ValueError(f"schema-base definitions already exist: {sorted(conflicts)}")
+    defs[anchors(defs)[anchor]] = meta
+    defs |= base_defs
+    return doc
+
+
+def static_refs(doc: dict) -> dict:
+    """Replace every ``$dynamicRef`` with a plain ``$ref``: they are equivalent in a self-contained file."""
+    names = anchors(doc.get("$defs", {}))
+
+    def static(node: dict) -> dict:
+        node = {key: value for key, value in node.items() if key != "$dynamicAnchor"}
+        if "$dynamicRef" in node:
+            target = f"#/$defs/{names[node['$dynamicRef'].removeprefix('#')]}"
+            node = {"$ref" if key == "$dynamicRef" else key: value for key, value in node.items()}
+            node["$ref"] = target
         return node
 
-    def add_or_references(self):
-        """Replace ``oneOf: [X, Reference]`` with ``X-or-reference`` (OpenAPI 3.0 only)."""
-        reference_ref = {"$ref": filename(REFERENCE)}
-        created = {}
+    return transform(doc, static)
 
-        def replace(node: dict, _prop):
-            choices = node.get("oneOf")
-            if node.keys() != {"oneOf"} or len(choices) != 2 or reference_ref not in choices:
-                return node
-            target = next(choice for choice in choices if choice != reference_ref)
-            if target.keys() != {"$ref"} or "#" in target["$ref"]:
-                return node
-            name = target["$ref"].removeprefix(PREFIX).removesuffix(".json") + "-or-reference"
-            created[name] = {"oneOf": [target, reference_ref]}
-            return {"$ref": filename(name)}
 
-        self.docs = {name: transform(doc, replace) for name, doc in self.docs.items()}
-        self.docs |= created
-
-    def add_collections(self):
-        occurrences = {}
-
-        def core(node: dict, prop):
-            for name, (props, kind, item) in COLLECTIONS.items():
-                if (
-                    prop in props
-                    and name not in self.docs
-                    and node.get("type") == JSON_TYPE[kind]
-                    and node.get(ITEMS_KEYWORD[kind]) == {"$ref": filename(item)}
-                ):
-                    return name, {"type": JSON_TYPE[kind], ITEMS_KEYWORD[kind]: {"$ref": filename(item)}}
-            return None, None
-
-        def collect(node: dict, prop):
-            name, shared = core(node, prop)
-            if name:
-                extra = {key: value for key, value in node.items() if key not in shared}
-                occurrences.setdefault(name, []).append(extra)
-            return node
-
-        for doc in self.docs.values():
-            transform(doc, collect)
-
-        # Keywords common to every occurrence move into the collection, the others stay in place.
-        collections = {}
-        for name, extras in occurrences.items():
-            _, kind, item = COLLECTIONS[name]
-            common = {key: value for key, value in extras[0].items() if all(e.get(key) == value for e in extras)}
-            common = {key: value for key, value in common.items() if key not in ("default", "description")}
-            collections[name] = {"type": JSON_TYPE[kind], ITEMS_KEYWORD[kind]: {"$ref": filename(item)}} | common
-
-        def replace(node: dict, prop):
-            name, shared = core(node, prop)
-            if not name:
-                return node
-            moved = shared.keys() | collections[name].keys()
-            extra = {key: value for key, value in node.items() if key not in moved}
-            if self.draft_04 and extra:
-                # Draft 4 ignores the keywords next to $ref.
-                return {"allOf": [{"$ref": filename(name)}]} | extra
-            return {"$ref": filename(name)} | extra
-
-        self.docs = {name: transform(doc, replace) for name, doc in self.docs.items()}
-        self.docs |= collections
-
-    def add_resource(self):
-        """Add a Components Object that also accepts named Path Items in ``paths``."""
-        resource = copy.deepcopy(self.docs["components"])
-        resource.pop("$comment", None)
-        path_item = {"$ref": filename("path-item")}
-        if self.draft_04:
-            name_pattern = next(iter(resource["properties"]["schemas"]["patternProperties"]))
-            paths = {"type": "object", "patternProperties": {name_pattern: path_item}, "additionalProperties": False}
-        else:
-            property_names = next(iter(resource["patternProperties"].values()))["propertyNames"]
-            paths = {"type": "object", "additionalProperties": path_item, "propertyNames": property_names}
-        resource["properties"] = {"paths": paths} | resource["properties"]
-        self.docs[RESOURCE] = {"description": RESOURCE_DESCRIPTION} | resource
-
-    def files(self) -> dict[str, dict]:
-        files = {filename(name): self.bundle(name, self.docs) for name in self.docs}
-        if self.base is not None:
-            # The base files validate every Schema Object against the OpenAPI dialect: instead of overriding
-            # the dynamic anchor like upstream, the "schema" definition is replaced by the dialect.
-            base_defs = copy.deepcopy(self.base["$defs"])
-            dialect_ref = {"$ref": "#/$defs/dialect"}
-
-            def inline_dialect(node: dict, _prop):
-                return copy.deepcopy(base_defs["dialect"]) if node == dialect_ref else node
-
-            meta = transform(base_defs.pop("schema"), inline_dialect)
-            meta.pop("$dynamicAnchor")
-            docs = self.docs | {
-                "schema": meta,
-                ROOT_BASE: self.base | {"$defs": base_defs},
-                RESOURCE_BASE: {
-                    "description": RESOURCE_DESCRIPTION + " Schema Objects are validated with the OpenAPI dialect.",
-                    "$ref": filename(RESOURCE),
-                },
-            }
-            for name in (ROOT_BASE, RESOURCE_BASE):
-                files[filename(name)] = self.bundle(name, docs)
-        return files
-
-    def bundle(self, name: str, docs: dict[str, dict]) -> dict:
-        """Return ``docs[name]`` with every schema it references embedded in its definitions."""
-        defs_keyword = "definitions" if self.draft_04 else "$defs"
-        names = {filename(doc_name): doc_name for doc_name in docs}
-
-        def target(value: str, doc_name: str) -> tuple[str, str] | None:
-            if value.startswith("#"):
-                return doc_name, value[1:]
-            if "://" in value:
-                return None
-            file, _, fragment = value.partition("#")
-            return names[file], fragment
-
-        def references(node: dict, _prop):
-            for keyword in ("$ref", "$dynamicRef"):
-                if isinstance(node.get(keyword), str) and (found := target(node[keyword], "")):
-                    referenced.add(found[0])
-            return node
-
-        included, pending = set(), [name]
-        while pending:
-            referenced = set()
-            transform(docs[pending.pop()], references)
-            pending += referenced - included - {name, ""}
-            included |= referenced - {name, ""}
-
-        def rewrite(doc_name: str):
-            def replace(node: dict, _prop):
-                node.pop("$dynamicAnchor", None)
-                result = {}
-                for key, value in node.items():
-                    if key in ("$ref", "$dynamicRef") and isinstance(value, str) and (found := target(value, doc_name)):
-                        ref_name, fragment = found
-                        if key == "$dynamicRef":
-                            # Points to a $dynamicAnchor, always at the root of its file.
-                            fragment = ""
-                        location = "" if ref_name == name else f"/{defs_keyword}/{ref_name}"
-                        key, value = "$ref", f"#{location}{fragment}"
-                    result[key] = value
-                return result
-
-            return replace
-
-        root = transform(copy.deepcopy(docs[name]), rewrite(name))
-        root.pop("$schema", None)
-        defs = root.get(defs_keyword, {})
-        for doc_name in sorted(included):
-            if doc_name in defs:
-                raise ValueError(f"{filename(name)}: {defs_keyword}/{doc_name} already exists")
-            defs[doc_name] = transform(copy.deepcopy(docs[doc_name]), rewrite(doc_name))
-            defs[doc_name].pop("$schema", None)
-        if defs:
-            root[defs_keyword] = defs
-        return {"$schema": self.dialect} | root
+def generate(schema: dict, base: dict | None) -> dict[str, dict]:
+    upstream_id = schema.get("$id") or schema.get("id")
+    openapi = {key: value for key, value in schema.items() if key not in ("$id", "id")}
+    files = {"openapi.json": openapi, "openapi-resource.json": resource(openapi)}
+    if base is not None:
+        if base["$ref"] != upstream_id:
+            raise ValueError(f"{base['$id']} references {base['$ref']}, expected {upstream_id}")
+        if unknown := base.keys() - {"$id", "$schema", "description", "$ref", "properties", "$defs"}:
+            raise ValueError(f"Unexpected schema-base keywords: {sorted(unknown)}")
+        openapi_base = with_base(openapi, base)
+        openapi_base["description"] = base["description"]
+        for name, prop in base["properties"].items():
+            openapi_base["properties"][name] = openapi_base["properties"].get(name, {}) | prop
+        resource_base = with_base(files["openapi-resource.json"], base)
+        resource_base["description"] += BASE_DESCRIPTION
+        files |= {"openapi-base.json": openapi_base, "openapi-resource-base.json": resource_base}
+    return {filename: static_refs(doc) for filename, doc in files.items()}
 
 
 def update(version: str, output: Path):
@@ -322,12 +148,7 @@ def update(version: str, output: Path):
     base_url = latest_url(version, "schema-base")
     print(f"OpenAPI {version}: {schema_url}" + (f", {base_url}" if base_url else ""))
 
-    splitter = Splitter(fetch(schema_url), fetch(base_url) if base_url else None)
-    if splitter.draft_04:
-        splitter.add_or_references()
-    splitter.add_collections()
-    splitter.add_resource()
-    files = splitter.files()
+    files = generate(fetch(schema_url), fetch(base_url) if base_url else None)
 
     output.mkdir(exist_ok=True)
     for stale in output.glob("*.json"):

@@ -4,19 +4,16 @@
 [![Last commit](https://img.shields.io/github/last-commit/eleaven/schemas/main)](https://github.com/eleaven/schemas/commits/main)
 [![License](https://img.shields.io/github/license/eleaven/schemas)](LICENSE)
 
-Improved JSON Schemas, automatically kept up to date with their upstream sources by GitHub Actions.
+Custom JSON Schemas, automatically kept up to date with their upstream sources by GitHub Actions.
 
 ## Why?
 
-The schemas in this repository start from the upstream version and improve it, for example by:
+The schemas in this repository start from the upstream version and customize or improve it, for example by:
 
 - fixing mistakes or inconsistencies in the upstream schema;
 - adding stricter constraints where the specification allows it;
-- splitting definitions into reusable sub-schemas;
+- adding schemas for common layouts, such as one file per resource;
 - making the schemas compatible with every IDE.
-
-The goal is a better experience in IDEs and more reliable validation in CI, while staying compatible with the
-upstream specification.
 
 ## Schema catalog
 
@@ -40,8 +37,8 @@ Two sources are available:
 For example, the OpenAPI 3.1 schema:
 
 ```text
-https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi.json
-https://raw.githubusercontent.com/eleaven/schemas/main/openapi/3.1/openapi.json
+https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi-base.json
+https://raw.githubusercontent.com/eleaven/schemas/main/openapi/3.1/openapi-base.json
 ```
 
 > [!WARNING]
@@ -59,7 +56,7 @@ https://raw.githubusercontent.com/eleaven/schemas/main/openapi/3.1/openapi.json
 Any editor using the YAML language server (VS Code, Neovim, Helix, …) picks up a modeline at the top of the file:
 
 ```yaml
-# yaml-language-server: $schema=https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi.json
+# yaml-language-server: $schema=https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi-base.json
 openapi: 3.1.0
 ```
 
@@ -68,7 +65,7 @@ openapi: 3.1.0
 With [check-jsonschema](https://github.com/python-jsonschema/check-jsonschema):
 
 ```bash
-check-jsonschema --schemafile https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi.json openapi.yaml
+check-jsonschema --schemafile https://cdn.jsdelivr.net/gh/eleaven/schemas@main/openapi/3.1/openapi-base.json openapi.yaml
 ```
 
 ## Automatic updates
