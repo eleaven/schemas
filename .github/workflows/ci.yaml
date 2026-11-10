@@ -44,14 +44,23 @@ jobs:
           python-version: "3.13"
 
       - name: Generate ${{ matrix.folder }}
-        run: python ${{ matrix.folder }}/generate.py
+        run: python "$FOLDER/generate.py"
         env:
+          FOLDER: ${{ matrix.folder }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Keep the folder name inside the artifact, so that its layout doesn't depend on how many are downloaded.
+      - name: Stage ${{ matrix.folder }}
+        run: |
+          mkdir -p "$RUNNER_TEMP/staging"
+          cp -r "$FOLDER" "$RUNNER_TEMP/staging/"
+        env:
+          FOLDER: ${{ matrix.folder }}
 
       - uses: actions/upload-artifact@v7
         with:
           name: schemas-${{ matrix.folder }}
-          path: ${{ matrix.folder }}
+          path: ${{ runner.temp }}/staging
 
   commit:
     needs: generate
@@ -65,18 +74,24 @@ jobs:
         with:
           pattern: schemas-*
           path: ${{ runner.temp }}/schemas
+          merge-multiple: true
 
       - name: Replace updated folders
         run: |
           shopt -s nullglob
-          for artifact in "$RUNNER_TEMP"/schemas/schemas-*/; do
-            folder=$(basename "$artifact")
-            folder="${folder#schemas-}"
+          replaced=0
+          for generated in "$RUNNER_TEMP"/schemas/*/; do
+            folder=$(basename "$generated")
             # Only replace a top-level folder that has a generation script.
             [ -n "$folder" ] && [ -f "$folder/generate.py" ] || continue
             rm -rf -- "./$folder"
-            cp -r "$artifact" "./$folder"
+            cp -r "$generated" "./$folder"
+            replaced=$((replaced + 1))
           done
+          if [ "$replaced" -eq 0 ]; then
+            echo "::error::No generated folder found in the artifacts"
+            exit 1
+          fi
 
       - name: Commit changes
         run: |
